@@ -59,6 +59,8 @@ export class MyApp {
         }).catch(error => {
           console.log('failed to logout.');
         });
+    } else if (page.component === 'TabsPage') {
+      this.nav.setRoot(page.component, page.param);
     } else {
       this.nav.push(page.component, page.param);
     }
