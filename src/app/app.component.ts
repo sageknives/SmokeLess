@@ -12,15 +12,15 @@ import { AppConfig } from './app-config';
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
-  rootPage:any = 'LoginPage';
-  pages: Array<{ title: string, component: any }>;
+  rootPage: any = 'LoginPage';
+  pages: Array<{ title: string, component: any, param?: any }>;
   logoutButton = { title: 'Logout', component: 'LoginPage' };
 
   private versionNumber: string = AppConfig.VERSION_NUMBER;
 
   constructor(
-    private platform: Platform, 
-    private statusBar: StatusBar, 
+    private platform: Platform,
+    private statusBar: StatusBar,
     private splashScreen: SplashScreen,
     private userService: UserService
   ) {
@@ -29,9 +29,9 @@ export class MyApp {
   setMenu() {
     this.pages = [
       { title: "Welcome", component: undefined },
-      { title: 'Home', component: 'HomePage' },
-      { title: 'List', component: 'ListPage' },
-      { title: 'Graph', component: 'GraphPage' },
+      { title: 'Home', component: 'TabsPage', param: { id: 0 } },
+      { title: 'List', component: 'TabsPage', param: { id: 1 } },
+      { title: 'Graph', component: 'TabsPage', param: { id: 2 } },
       { title: 'Preferences', component: undefined },
       { title: 'Edit Profile', component: 'EditProfile' },
     ];
@@ -59,8 +59,8 @@ export class MyApp {
         }).catch(error => {
           console.log('failed to logout.');
         });
-    }else {
-      this.nav.push(page.component);
+    } else {
+      this.nav.push(page.component, page.param);
     }
   }
 }
