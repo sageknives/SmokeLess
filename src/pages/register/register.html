@@ -1,0 +1,64 @@
+<ion-header>
+	<ion-navbar color="dark">
+		<ion-title>Register</ion-title>
+	</ion-navbar>
+</ion-header>
+
+<ion-content>
+	<ion-card>
+		<ion-card-content class="info-card-content">
+			<form (ngSubmit)="register(registerform)" id="registerform" #registerform="ngForm" novalidate>
+				<ion-list no-lines>
+					<ion-row>
+						<ion-col col-12 [class]="username.valid || submitted == false || username.required?'item-background':'item-background error'">
+							<ion-label stacked color="primary">
+								Username
+								<span class="error-message">
+									: A Username of 2 to 25 characters is required.
+								</span>
+							</ion-label>
+							<ion-item class="user-input">
+								<ion-input [(ngModel)]="user.username" name="username" type="text" #username="ngModel" spellcheck="off" autocomplete="off"
+								 autocapitalize="off" required minlength="2" maxlength="25" placeholder="Dan the Man!">
+								</ion-input>
+							</ion-item>
+						</ion-col>
+						<ion-col col-12 [class]="password.valid || submitted == false || password.required?'item-background':'item-background error'">
+							<ion-label stacked color="primary">
+								Password
+								<span class="error-message">
+									: A password is required.
+								</span>
+							</ion-label>
+							<ion-item class="user-input">
+								<ion-input [(ngModel)]="user.password" name="password" type="password" #password="ngModel" spellcheck="off" autocomplete="off"
+								 autocapitalize="off" required minlength="5" maxlength="25" placeholder="secrets">
+								</ion-input>
+							</ion-item>
+						</ion-col>
+						<ion-col col-12 [class]="goal.valid || submitted == false || goal.required?'item-background':'item-background error'">
+							<ion-label stacked color="primary">
+								Daily Smoke Goal
+								<span class="error-message">
+									: A daily smoke goal is required.
+								</span>
+							</ion-label>
+							<ion-item class="user-input">
+								<ion-input [(ngModel)]="user.goal" name="goal" type="number" #goal="ngModel" required minlength="1" maxlength="7"
+								 placeholder="20">
+								</ion-input>
+							</ion-item>
+						</ion-col>
+					</ion-row>
+				</ion-list>
+			</form>
+		</ion-card-content>
+	</ion-card>
+</ion-content>
+<ion-footer>
+	<ion-fab bottom right #rightfab>
+		<button ion-fab color="dark" tappable type="submit" form="registerform">
+			<ion-icon name="checkmark"></ion-icon>
+		</button>
+	</ion-fab>
+</ion-footer>

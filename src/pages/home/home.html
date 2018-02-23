@@ -1,6 +1,14 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Home</ion-title>
+  <ion-navbar color="dark">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-end icon-only (click)="refresh()">
+        <ion-icon name="refresh" [ngClass]="refreshing?'icon-spinning':''"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -15,3 +23,4 @@
     update any existing page or create new pages.
   </p>
 </ion-content>
+

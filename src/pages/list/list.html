@@ -1,0 +1,29 @@
+<ion-header>
+    <ion-navbar color="dark">
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title>{{title}}</ion-title>
+      <ion-buttons end>
+        <button ion-button icon-end icon-only (click)="refresh()">
+          <ion-icon name="refresh" [ngClass]="refreshing?'icon-spinning':''"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-navbar>
+  </ion-header>
+
+
+<ion-content>
+  <ion-list>
+    <ng-template ngFor let-entry [ngForOf]="entries" let-i="index" [ngForTrackBy]="trackByFn">
+      <ion-item tappable (click)="goToEntry(entry)">{{entry.start}}</ion-item>
+    </ng-template>
+  </ion-list>
+</ion-content>
+<ion-footer>
+    <ion-fab bottom right #rightfab>
+      <button ion-fab color="dark" tappable type="button" tappable (click)="goToEntry()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-fab>
+  </ion-footer>

@@ -1,0 +1,60 @@
+<ion-header *ngIf="!hideForm">
+	<ion-navbar color="dark">
+		<button ion-button menuToggle>
+			<ion-icon name="menu"></ion-icon>
+		</button>
+		<ion-title center>Login</ion-title>
+	</ion-navbar>
+</ion-header>
+
+
+<ion-content>
+	<ion-card *ngIf="!hideForm">
+		<ion-card-content class="info-card-content">
+			<form (ngSubmit)="loginWithForm(loginForm)" id="loginform" #loginForm="ngForm" novalidate>
+				<ion-list no-lines>
+					<ion-row>
+						<ion-col col-12 [class]="username.valid || submitted == false || username.required ? 'item-background' :'item-background error'">
+							<ion-label stacked color="primary">
+								Username
+								<span class="error-message">
+									: A Username of 3 to 25 characters is required.
+								</span>
+							</ion-label>
+							<ion-item class="user-input">
+								<ion-input [(ngModel)]="user.username" name="username" type="text" #username="ngModel" spellcheck="off" autocomplete="off"
+								 autocapitalize="off" required minlength="3" maxlength="25" placeholder="Dan the Man!">
+								</ion-input>
+							</ion-item>
+						</ion-col>
+						<ion-col col-12 class="" [class]="password.valid || submitted == false || password.required?'item-background':'error item-background'">
+							<ion-label stacked color="primary">
+								Password
+								<span class="error-message">
+									: A password is required.
+								</span>
+							</ion-label>
+							<ion-item class="user-input">
+								<ion-input (keyup.enter)="hideKeyboard($event)" [(ngModel)]="user.password" name="password" type="password" #password="ngModel" spellcheck="off" autocomplete="off"
+								 autocapitalize="off" required minlength="5" maxlength="25" placeholder="secrets">
+								</ion-input>
+							</ion-item>
+						</ion-col>
+					</ion-row>
+				</ion-list>
+			</form>
+		</ion-card-content>
+	</ion-card>
+</ion-content>
+<ion-footer *ngIf="!hideForm">
+	<ion-fab bottom left #lefttfab>
+		<button ion-fab color="dark" tappable (click)="register()">
+			<ion-icon name="add"></ion-icon>
+		</button>
+	</ion-fab>
+	<ion-fab bottom right #rightfab>
+		<button ion-fab color="dark" tappable type="submit" form="loginform">
+			<ion-icon name="checkmark"></ion-icon>
+		</button>
+	</ion-fab>
+</ion-footer>

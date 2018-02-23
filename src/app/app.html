@@ -1,1 +1,26 @@
-<ion-nav [root]="rootPage"></ion-nav>
+<ion-menu [content]="content">
+  <ion-header>
+    <ion-toolbar color="dark">
+      <ion-title>SmokerLess</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-list no-lines class="side-menu">
+      <ng-template ngFor let-p [ngForOf]="pages" let-i="index" [ngForTrackBy]="trackByFn">
+        <ion-item *ngIf="p.component" color="darkOverlay" menuClose tappable (click)="openPage(p)">
+          {{p.title}}
+        </ion-item> 
+        <ion-item-divider color="background" class="menu-subheader" *ngIf="!p.component">{{p.title}}</ion-item-divider>
+      </ng-template>
+      <ion-item tappable (click)="updateCount()" color="darkOverlay" >Version: {{versionNumber}}</ion-item>
+      <ion-item color="primary" *ngIf="devModeCount > 7" tappable (click)="secretButton()" center>Continue to the Magic Portal?</ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-footer class="bar button-bar">
+    <ion-toolbar color="dark" tappable menuClose (click)="openPage(logoutButton)">
+      <ion-title>{{logoutButton.title}}</ion-title>
+    </ion-toolbar>
+  </ion-footer>
+</ion-menu>
+<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
