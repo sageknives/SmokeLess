@@ -1,9 +1,9 @@
-<ion-header *ngIf="!hideForm">
-	<ion-navbar color="dark">
-		<button ion-button menuToggle>
+<ion-header >
+	<ion-navbar color="dark" >
+		<button ion-button menuToggle *ngIf="!hideForm">
 			<ion-icon name="menu"></ion-icon>
 		</button>
-		<ion-title center>Login</ion-title>
+		<ion-title center *ngIf="!hideForm">Login</ion-title>
 	</ion-navbar>
 </ion-header>
 
