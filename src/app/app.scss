@@ -14,3 +14,26 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+.alert-md .alert-button.left-2-button{
+  background:$primary;
+  color:$light;
+
+}
+.alert-md .alert-button.right-2-button{
+  background:$danger;
+  color:$light;
+}
+
+.alert-md .alert-button.buttons-2{
+  width:50%;
+  margin:0;
+}
+.alert-md .alert-button.buttons-2 .button-inner{
+
+  text-align:center!important;
+  justify-content: center!important; 
+}
+.alert-md .alert-button-group{
+  padding:8px!important;
+}

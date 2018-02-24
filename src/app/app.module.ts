@@ -10,6 +10,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { UserService } from '../providers/user-service';
 import { ToastService } from '../providers/toast-service';
+import { SmokingService } from '../providers/smoking-service';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { ToastService } from '../providers/toast-service';
     SQLite,
     UserService,
     ToastService,
+    SmokingService,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })

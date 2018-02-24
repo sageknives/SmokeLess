@@ -8,6 +8,7 @@ import { User } from '../models/user/user';
 
 @Injectable()
 export class UserService {
+  private user: User;
   private db: SQLiteObject = null;
   constructor(
     private platform: Platform,
@@ -113,10 +114,11 @@ export class UserService {
               goal: result.goal,
               loggedIn: true
             });
-            db.executeSql('UPDATE user SET loggedIn =?', [true])
+            db.executeSql('UPDATE user SET loggedIn =? WHERE _id =?', [true,user.getId()])
               .then((res: any) => {
                 return this.closeDatabase();
               }).then((wasClosed: boolean) => {
+                this.user = dbUser;
                 resolve(dbUser);
               }).catch(error => {
                 reject("error logging in");
@@ -151,6 +153,7 @@ export class UserService {
             });
             this.closeDatabase()
               .then((wasClosed: boolean) => {
+                this.user = dbUser;
                 resolve(dbUser);
               }).catch(reject);
           } else if (res.rows.length === 0) {
@@ -177,6 +180,7 @@ export class UserService {
         }).then((res: any) => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
+          this.user = undefined;
           resolve();
         }).catch(error => {
           reject("error logging in");
@@ -184,21 +188,15 @@ export class UserService {
     });
   }
 
-  saveUser(user: User): Promise<User> {
+  saveUserGoal(user: User): Promise<User> {
     return new Promise((resolve, reject) => {
       resolve(user);
     });
   }
 
-  getUser(): Promise<User> {
-    return new Promise((resolve, reject) => {
-      resolve(User.fromJSON({}));
-    });
+  getCurrentUser(): User {
+    return this.user;
   }
 
-  private createUser(user: User): Promise<User> {
-    return new Promise((resolve, reject) => {
-      resolve(user);
-    })
-  }
+
 }

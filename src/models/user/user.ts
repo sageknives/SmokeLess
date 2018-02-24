@@ -1,7 +1,7 @@
 export class User{
   
   constructor(
-    private _id: string,
+    private _id: number,
     private username: string,
     private password: string,
     private goal: number,
@@ -9,7 +9,7 @@ export class User{
     private _rev?: string
   ) { }
 
-  public getId(): string{
+  public getId(): number{
     return this._id;
   }
 

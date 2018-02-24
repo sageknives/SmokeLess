@@ -1,3 +1,17 @@
 page-home {
+  .smoke-button{
+    background-color:$danger;
+    margin:0 auto;
+    width:80vw;
+    height:80vw;
+    border-radius:40vw;
+    border: 8px solid $dark;
+    font-size:20vw;
+    color:$light;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+  }
 
 }

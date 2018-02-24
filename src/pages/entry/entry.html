@@ -6,7 +6,7 @@
       <ion-title>{{title}}</ion-title>
       <ion-buttons end>
         <button ion-button icon-end icon-only (click)="refresh()">
-          <ion-icon name="refresh" [ngClass]="refreshing?'icon-spinning':''"></ion-icon>
+          <ion-icon name="delete" [ngClass]="refreshing?'icon-spinning':''"></ion-icon>
         </button>
       </ion-buttons>
     </ion-navbar>
@@ -14,7 +14,7 @@
 
 
 <ion-content>
-
+<p>{{entry.start}}</p>
 </ion-content>
 <ion-footer>
     <ion-fab bottom right #rightfab>
