@@ -1,25 +1,56 @@
 <ion-header>
-    <ion-navbar color="dark">
-      <button ion-button menuToggle>
-        <ion-icon name="menu"></ion-icon>
+  <ion-navbar color="dark">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons end *ngIf="entry._id">
+      <button ion-button icon-end icon-only (click)="deleteEntry()">
+        <ion-icon name="trash"></ion-icon>
       </button>
-      <ion-title>{{title}}</ion-title>
-      <ion-buttons end>
-        <button ion-button icon-end icon-only (click)="refresh()">
-          <ion-icon name="delete" [ngClass]="refreshing?'icon-spinning':''"></ion-icon>
-        </button>
-      </ion-buttons>
-    </ion-navbar>
-  </ion-header>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
 
 
 <ion-content>
-<p>{{entry.start}}</p>
+  <p>{{entry.start | toLocalDateTime}}</p>
+  <ion-list no-lines>
+    <ion-row>
+      <ion-col col-6 [class]="true ? 'item-background' :'item-background error'">
+        <ion-label stacked color="primary">
+          Date
+          <span class="error-message">
+            : A date is required.
+          </span>
+        </ion-label>
+        <span ion-datepicker [value]="chosenDate" (ionChanged)="updateDate($event)" clear class="ScheduleDate">
+          <ion-item class="item-ion-datetime user-input">
+            <p>{{entry.start | toLocalDate}}
+              <ion-icon name="calendar"></ion-icon>
+            </p>
+          </ion-item>
+        </span>
+      </ion-col>
+      <ion-col col-6 [class]="true ? 'item-background' :'item-background error'">
+        <ion-label stacked color="primary">
+          Time
+          <span class="error-message">
+            : A Time is required.
+          </span>
+        </ion-label>
+        <ion-item class="item-ion-datetime">
+          <ion-datetime displayFormat="hh:mm A" pickerFormat=" h:mm A" [(ngModel)]="chosenTime" (ngModelChange)="updateTime($event)" #chosentime="ngModel"
+            [ngModelOptions]="{standalone: true}"></ion-datetime>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-list>
 </ion-content>
 <ion-footer>
-    <ion-fab bottom right #rightfab>
-      <button ion-fab color="dark" tappable type="button" >
-        <ion-icon name="checkmark"></ion-icon>
-      </button>
-    </ion-fab>
-  </ion-footer>
+  <ion-fab bottom right #rightfab>
+    <button ion-fab color="dark" tappable type="button" (click)="saveEntry()">
+      <ion-icon name="checkmark"></ion-icon>
+    </button>
+  </ion-fab>
+</ion-footer>

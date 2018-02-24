@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, App } from 'ionic-angular';
 import { Entry } from '../../models/smoke/entry';
 import { SmokingService } from '../../providers/smoking-service';
 import { UserService } from '../../providers/user-service';
@@ -20,7 +20,9 @@ export class ListPage {
     public navParams: NavParams,
     private userService: UserService,
     private smokingService:SmokingService,
-    private toast:ToastService
+    private toast:ToastService,
+    public appCtrl: App
+
   ) {
     // for (let i = 0; i < 25; i++) {
     //   let numString = i>9?i:"0"+i;
@@ -29,14 +31,18 @@ export class ListPage {
   }
 
   ionViewDidLoad() {
+    
+  }
+  ionViewWillEnter(){
     this.refresh();
   }
-
   refresh(){
     this.user = this.userService.getCurrentUser();
     this.smokingService.getAllEntries(this.user.getId())
     .then((entries:Entry[])=>{
-      this.entries = entries;
+      this.entries = entries.sort((a,b)=>{
+        return a.getStart() > b.getStart()? -1 : a.getStart() < b.getStart() ? 1 : 0;
+      });
     }).catch(this.toast.showError);
   }
 
@@ -46,6 +52,12 @@ export class ListPage {
 
   addEntry(){
     this.navCtrl.push('EntryPage');
+  }
+
+  gotoAnalytics(){
+    this.appCtrl.getRootNav().push('GraphTabsPage')
+
+    //this.navCtrl.parent.parent.push('GraphTabsPage');
   }
 
 }

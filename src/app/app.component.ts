@@ -31,7 +31,9 @@ export class MyApp {
       { title: "Welcome", component: undefined },
       { title: 'Home', component: 'TabsPage', param: { id: 0 } },
       { title: 'List', component: 'TabsPage', param: { id: 1 } },
-      { title: 'Graph', component: 'TabsPage', param: { id: 2 } },
+      { title: 'Calendar', component: 'TabsPage', param: { id: 2 } },
+      { title: 'Daily Graph', component: 'GraphTabsPage'},
+      { title: 'Monthly Graph', component: 'GraphTabsPage', param: { id: 1 } },
       { title: 'Preferences', component: undefined },
       { title: 'Edit Profile', component: 'EditProfile' },
     ];

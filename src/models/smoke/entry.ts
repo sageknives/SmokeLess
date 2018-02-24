@@ -11,6 +11,10 @@ export class Entry{
     return this.start;
   }
 
+  setStart(start:string):void{
+    this.start = start;
+  }
+
   getUserId():number{
     return this.userId;
   }

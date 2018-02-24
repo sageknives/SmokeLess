@@ -4,6 +4,8 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { SQLite } from '@ionic-native/sqlite';
 
+import { PipesModule } from '../pipes/pipes.module';
+import { DatePickerModule } from 'ion-datepicker';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -12,12 +14,15 @@ import { UserService } from '../providers/user-service';
 import { ToastService } from '../providers/toast-service';
 import { SmokingService } from '../providers/smoking-service';
 
+
 @NgModule({
   declarations: [
     MyApp
   ],
   imports: [
     BrowserModule,
+    PipesModule,
+    DatePickerModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],

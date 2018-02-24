@@ -62,7 +62,7 @@ export class LoginPage {
         this.user = dbUser;
         if (this.user.getUsername() && this.user.getPassword()) {
           this.enableMenu(true);
-          this.navCtrl.setRoot('TabsPage',{id:0});
+          this.navCtrl.setRoot('TabsPage');
           this.toast.hideLoading();
         } else {
           this.toast.hideLoading();

@@ -1,18 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavParams, Tabs } from 'ionic-angular';
 
-// import { ListPage } from '../list/list';
-// import { GraphPage } from '../graph/graph';
-// import { HomePage } from '../home/home';
 @IonicPage()
 @Component({
-  templateUrl: 'tabs.html'
+  templateUrl: 'graph-tabs.html'
 })
-export class TabsPage {
+export class GraphTabsPage {
 
-  tab1Root = 'HomePage';
-  tab2Root = 'ListPage';
-  tab3Root = 'CalendarPage';
+  tab1Root = 'DailyGraphPage';
+  tab2Root = 'MonthlyGraphPage';
   @ViewChild('myTabs') tabRef: Tabs; 
 
   constructor(

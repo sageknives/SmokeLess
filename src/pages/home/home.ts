@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, IonicPage } from 'ionic-angular';
+import { NavController, IonicPage, App } from 'ionic-angular';
 import { UserService } from '../../providers/user-service';
 import { User } from '../../models/user/user';
 import { ToastService } from '../../providers/toast-service';
@@ -19,12 +19,13 @@ export class HomePage {
     private navCtrl: NavController,
     private userService: UserService,
     private smokingService:SmokingService,
-    private toast: ToastService
+    private toast: ToastService,
+    public appCtrl: App
   ) {
 
   }
 
-  ionViewWillEnter() {
+  ionViewWillEnter(){
     this.user = this.userService.getCurrentUser();
     if (!this.user) {
       this.navCtrl.setRoot('LoginPage');
@@ -50,5 +51,8 @@ export class HomePage {
     }).catch(this.toast.showError);
   }
 
+  gotoAnalytics(){
+    this.appCtrl.getRootNav().push('GraphTabsPage')
+  }
 
 }

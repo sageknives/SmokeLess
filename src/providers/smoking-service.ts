@@ -122,7 +122,7 @@ export class SmokingService {
    * delete Entry
    * @param id {number} the smoke id 
    */
-  public deleteEntry(id: number, date: string): Promise<boolean> {
+  public deleteEntry(id: number): Promise<boolean> {
     return new Promise((resolve, reject) => {
       let entry: Entry;
       this.getDatabase()
