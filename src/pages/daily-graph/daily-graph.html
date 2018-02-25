@@ -14,4 +14,11 @@
 
 
 <ion-content>
+  <ion-list>
+    <ng-template ngFor let-entry [ngForOf]="entries" let-i="index" [ngForTrackBy]="trackByFn">
+      <ion-item tappable (click)="goToEntry(entry)">{{entry.start}}</ion-item>
+    </ng-template>
+  </ion-list>
+  <canvas #lineCanvas></canvas>
+
 </ion-content>

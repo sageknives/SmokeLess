@@ -144,21 +144,22 @@ export class SmokingService {
    * @param start {string} the start iso string
    * @param end {string} the end iso string
    */
-  public getEntries(userId: number, start: string, end: string): Promise<Entry> {
+  public getEntries(userId: number, start: string, end: string): Promise<Entry[]> {
     return new Promise((resolve, reject) => {
-      let entry: Entry;
+      let entries: Entry[] = new Array<Entry>();
       this.getDatabase()
         .then((db: SQLiteObject) => {
           return db.executeSql(
-            'SELECT * FROM smoke WHERE user_id =? AND entry_time_stamp BETWEEN date(?) AND date(?)', [userId, start, end]);
+            'SELECT * FROM smoke WHERE user_id =? AND entry_time_stamp >= ? AND entry_time_stamp < ?', [userId, start, end]);
         }).then(res => {
-          let result = res.rows.item(0);
-          entry = new Entry(result._id, result.date, result.userId);
+          for (var i = 0; i < res.rows.length; i++) {
+            entries.push(new Entry(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).user_id));
+          }
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
-          resolve(entry);
+          resolve(entries);
         }).catch(e => {
-          reject("There was a problem adding your smoke");
+          reject("There was a problem getting your entries");
         });
     });
   }
@@ -186,4 +187,36 @@ export class SmokingService {
         });
     });
   }
+
+  /**
+   * get Entries all
+   * @param id {number} the smoke id 
+   */
+  // public getAllEntriesCountPerHour(day:string,userId: number): Promise<HourCount[]> {
+  //   return new Promise((resolve, reject) => {
+  //     let hours: HourCount[] = new Array<HourCount>();
+  //     this.getDatabase()
+  //       .then((db: SQLiteObject) => {
+  //         return db.executeSql(
+  //           'SELECT * FROM smoke WHERE user_id =?', [userId]);
+  //       }).then(res => {
+  //         for (var i = 0; i < res.rows.length; i++) {
+  //           let hour: HourCount ={
+  //             hour:res
+  //           }
+  //           hours.push(new HourCount(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).user_id));
+  //         }
+  //         return this.closeDatabase();
+  //       }).then((wasClosed: boolean) => {
+  //         resolve(entries);
+  //       }).catch(e => {
+  //         reject("There was a problem adding your smoke");
+  //       });
+  //   });
+  // }
+}
+
+interface HourCount{
+  hour:number;
+  count:number;
 }
