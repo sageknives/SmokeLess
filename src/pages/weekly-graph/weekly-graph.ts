@@ -8,26 +8,27 @@ import * as moment from 'moment';
 import { Entry } from '../../models/smoke/entry';
 import { Chart } from 'chart.js';
 
-interface HourCount {
-  hour: number,
+interface DayCount {
+  day: number,
   count: number
 }
 
 @IonicPage()
 @Component({
-  selector: 'page-daily-graph',
-  templateUrl: 'daily-graph.html',
+  selector: 'page-weekly-graph',
+  templateUrl: 'weekly-graph.html',
 })
-export class DailyGraphPage {
-  private title = "Daily Graph";
+export class WeeklyGraphPage {
+  private title = "Weekly Graph";
   private user: User = User.fromJSON({});
   private entries: Entry[] = new Array<Entry>();
-  private hourCounts: HourCount[] = new Array<HourCount>();
+  private dayCounts: DayCount[] = new Array<DayCount>();
   @ViewChild('lineCanvas') lineCanvas;
   lineChart: any;
   selectedDate: string = moment(Date.now()).startOf('day').toISOString();
-  total: number = 0;
-  average: number = 0;
+  total:number = 0;
+  average:number = 0;
+  daysOfTheWeek = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   constructor(
     public navCtrl: NavController,
@@ -39,48 +40,50 @@ export class DailyGraphPage {
   ) {
   }
 
-  prevDate() {
-    this.selectedDate = moment(this.selectedDate).add(-1, 'day').startOf('day').toISOString();
+  prevDate(){
+    this.selectedDate = moment(this.selectedDate).add(-7,'day').startOf('day').toISOString();
     this.setUpAndDisplayGraph();
   }
-  nextDate() {
-    this.selectedDate = moment(this.selectedDate).add(1, 'day').startOf('day').toISOString();
+  nextDate(){
+    this.selectedDate = moment(this.selectedDate).add(7,'day').startOf('day').toISOString();
     this.setUpAndDisplayGraph();
   }
 
   ionViewWillEnter() {
     this.userService.getLoggedInUser()
-      .then((user: User) => {
-        this.user = user;
-        if (!this.user) {
-          this.navCtrl.setRoot('LoginPage');
-          this.toast.show("Please login to continue");
-        }
-        else {
-          this.setUpAndDisplayGraph();
-        }
-      })
+    .then((user:User)=>{
+      this.user = user;
+      if (!this.user) {
+        this.navCtrl.setRoot('LoginPage');
+        this.toast.show("Please login to continue");
+      }
+      else{
+        let today = moment(this.selectedDate);
+        while(today.get('day')!==0) today.add(-1,'day');
+        this.selectedDate = today.startOf('day').toISOString();
+        this.setUpAndDisplayGraph();
+      }
+    })
   }
 
-  setUpAndDisplayGraph() {
-    let total: number = 0;
+  setUpAndDisplayGraph(){
+    let total:number = 0;
     let start = moment(this.selectedDate).startOf('day').toISOString();
-    let end = moment(start).add(1, 'day').toISOString();
+    let end = moment(start).add(7, 'day').toISOString();
     this.smokingService.getEntries(this.user.getId(), start, end)
       .then((entries: Entry[]) => {
-        while (this.hourCounts.length > 0) this.hourCounts.pop();
-        for (let i = 0; i < 24; i++) this.hourCounts.push({ hour: i, count: 0 });
+        while (this.dayCounts.length > 0) this.dayCounts.pop();
+        for (let i = 0; i < 7; i++) this.dayCounts.push({ day: i, count: 0 });
         entries.forEach(entry => {
-          let hour = moment(entry.getStart()).get('hour');
-          this.hourCounts[hour].count++;
+          let day = moment(entry.getStart()).get('day');
+          this.dayCounts[day].count++;
           total++;
         });
-        console.log("hours", this.hourCounts);
+        console.log("days", this.dayCounts);
         this.graphData();
         this.total = total;
-        this.average = Number.parseFloat((total / 24).toFixed(2));
-
-      }).catch(this.toast.showError);
+        this.average = Number.parseFloat((total / 7).toFixed(2));
+      }).catch(this.toast.showError); 
   }
 
   gotoHome() {
@@ -88,26 +91,25 @@ export class DailyGraphPage {
   }
 
   graphData() {
-    let hours = new Array<number>();
+    let days = new Array<string>();
     let counts = new Array<number>();
     let max = 0;
-    this.hourCounts.forEach(hourCount => {
-      let zeroToEleven = hourCount.hour % 12;
-      hours.push(zeroToEleven === 0 ? 12 : zeroToEleven);
+    this.dayCounts.forEach(hourCount => {
+      days.push(this.daysOfTheWeek[hourCount.day]);
       counts.push(hourCount.count);
       if (hourCount.count > max) max = hourCount.count;
     })
     this.lineChart = new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
-        labels: hours,
+        labels: days,
         datasets: [{
           label: "count",
-          backgroundColor: "#red",
+          backgroundColor: "#000",
           borderColor: "#000",
           data: counts,
           fill: false,
-          lineTension: 0
+          lineTension:0
         }
         ]
       },
@@ -135,7 +137,7 @@ export class DailyGraphPage {
             display: true,
             scaleLabel: {
               display: false,
-              labelString: 'hours'
+              labelString: 'day'
             }
           }],
           yAxes: [{

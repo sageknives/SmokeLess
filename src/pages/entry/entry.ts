@@ -47,6 +47,7 @@ export class EntryPage {
     } else {
       this.chosenDate = moment(Date.now()).toDate();
       this.chosenTime = moment(Date.now()).format();
+      this.entry.setStart(new Date().toISOString());
     }
   }
 

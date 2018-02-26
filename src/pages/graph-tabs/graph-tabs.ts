@@ -8,7 +8,8 @@ import { IonicPage, NavParams, Tabs } from 'ionic-angular';
 export class GraphTabsPage {
 
   tab1Root = 'DailyGraphPage';
-  tab2Root = 'MonthlyGraphPage';
+  tab2Root = 'WeeklyGraphPage';
+  tab3Root = 'MonthlyGraphPage';
   @ViewChild('myTabs') tabRef: Tabs; 
 
   constructor(

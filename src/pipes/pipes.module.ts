@@ -4,18 +4,21 @@ import { IonicModule } from 'ionic-angular';
 import { ToLocalDate } from './to-local-date';
 import { ToLocalDateTime } from './to-local-date-time';
 import { ToLocalTime } from './to-local-time';
+import { ToLocalMonthYear } from './to-local-month-year';
 
 @NgModule({
-  declarations:[
+  declarations: [
     ToLocalDate,
     ToLocalTime,
-    ToLocalDateTime
+    ToLocalDateTime,
+    ToLocalMonthYear
   ],
-  imports:[IonicModule],
-  exports:[
+  imports: [IonicModule],
+  exports: [
     ToLocalDate,
     ToLocalTime,
-    ToLocalDateTime
+    ToLocalDateTime,
+    ToLocalMonthYear
   ]
 })
-export class PipesModule{}
+export class PipesModule { }

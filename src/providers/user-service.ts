@@ -51,7 +51,7 @@ export class UserService {
         name: 'smokerless.db',
         location: 'default'
       }).then((db: SQLiteObject) => {
-        db.executeSql('CREATE TABLE IF NOT EXISTS user(_id INTEGER PRIMARY KEY, username TEXT, password TEXT, goal INTEGER, loggedIn BOOLEAN)', {})
+        db.executeSql('CREATE TABLE IF NOT EXISTS user(_id INTEGER PRIMARY KEY, username TEXT, password TEXT, goal INTEGER, loggedIn INTEGER)', {})
           .then((res: any) => {
             this.db = db;
             resolve(db);
@@ -80,11 +80,11 @@ export class UserService {
       this.getDatabase()
         .then((database: SQLiteObject) => {
           db = database;
-          return db.executeSql('SELECT * FROM user WHERE username =?',[user.getUsername()]);
+          return db.executeSql('SELECT * FROM user WHERE username =?', [user.getUsername()]);
         }).then(res => {
-          if(res.rows.length > 0) reject("Username already taken");
+          if (res.rows.length > 0) reject("Username already taken");
           else return db.executeSql('INSERT INTO user VALUES(NULL,?,?,?,?)',
-            [user.getUsername(), user.getPassword(), user.getGoal(), false]);
+            [user.getUsername(), user.getPassword(), user.getGoal(), 0]);
         }).then(res => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -98,6 +98,7 @@ export class UserService {
   login(user: User): Promise<User> {
     return new Promise((resolve, reject) => {
       let db: SQLiteObject;
+      let dbUser: User;
       this.getDatabase()
         .then((database: SQLiteObject) => {
           db = database;
@@ -105,29 +106,32 @@ export class UserService {
             'SELECT * FROM user WHERE username =? AND password =?',
             [user.getUsername(), user.getPassword()]);
         }).then((res: any) => {
-          if (res.rows.length === 1) {
+          if (res.rows.length === 0) {
+            reject("Invalid Credentials");
+            return;
+          }
+          if (res.rows.length !== 1) {
+            reject("Database error");
+            return;
+          }
+          else {
             let result = res.rows.item(0);
-            let dbUser: User = User.fromJSON({
+            dbUser = User.fromJSON({
               _id: result._id,
               username: result.username,
               password: result.password,
               goal: result.goal,
               loggedIn: true
             });
-            db.executeSql('UPDATE user SET loggedIn =? WHERE _id =?', [true,user.getId()])
-              .then((res: any) => {
-                return this.closeDatabase();
-              }).then((wasClosed: boolean) => {
-                this.user = dbUser;
-                resolve(dbUser);
-              }).catch(error => {
-                reject("error logging in");
-              })
-          } else if (res.rows.length === 0) {
-            reject("Invalid Credentials");
-          } else {
-            reject("Database error");
+            return db.executeSql('UPDATE user SET loggedIn =? WHERE _id =?', [1, dbUser.getId()]);
           }
+        }).then((res: any) => {
+          return this.closeDatabase();
+        }).then((wasClosed: boolean) => {
+          this.user = dbUser;
+          resolve(dbUser);
+        }).catch(error => {
+          reject("error logging in");
         }).catch(error => {
           console.log(error);
           reject(error)
@@ -140,7 +144,7 @@ export class UserService {
       this.getDatabase()
         .then((db: SQLiteObject) => {
           return db.executeSql(
-            'SELECT * FROM user WHERE loggedIn =?', [true]);
+            'SELECT * FROM user WHERE loggedIn =?', [1]);
         }).then((res: any) => {
           if (res.rows.length === 1) {
             let result = res.rows.item(0);
@@ -176,7 +180,7 @@ export class UserService {
       this.getDatabase()
         .then((database: SQLiteObject) => {
           db = database;
-          return db.executeSql('UPDATE user SET loggedIn =? WHERE loggedIn =?', [false, true]);
+          return db.executeSql('UPDATE user SET loggedIn =? WHERE loggedIn =?', [0, 1]);
         }).then((res: any) => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -196,6 +200,26 @@ export class UserService {
 
   getCurrentUser(): User {
     return this.user;
+  }
+
+  getUsers(): Promise<User[]> {
+    return new Promise((resolve, reject) => {
+      let db: SQLiteObject;
+      let users: User[] = new Array<User>();
+      this.getDatabase()
+        .then((database: SQLiteObject) => {
+          db = database;
+          return db.executeSql(
+            'SELECT * FROM user', []);
+        }).then((res: any) => {
+          for (var i = 0; i < res.rows.length; i++) {
+            users.push(new User(res.rows.item(i)._id, res.rows.item(i).username, res.rows.item(i).password, res.rows.item(i).goal, res.rows.item(i).loggedIn === 0 ? false : true));
+          }
+          return this.closeDatabase();
+        }).then((wasClosed: boolean) => {
+          resolve(users);
+        }).catch(reject);
+    });
   }
 
 

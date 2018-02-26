@@ -12,7 +12,34 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content>
+  <ion-row>
+    <ion-col col-2>
+      <button ion-button icon-end icon-only tappable (click)="prevDate()" color="light" class="full-height-button"  full>
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-col>
+    <ion-col col-8>
+      <h2 ion-text text-center padding-verticle>{{selectedDate | toLocalMonthYear}}</h2>
+    </ion-col>
+    <ion-col col-2>
+      <button ion-button icon-end icon-only tappable (click)="nextDate()" color="light" class="full-height-button" full>
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+    </ion-col>
+  </ion-row>
+  <div class="calendar-box">
+    <ng-template ngFor let-box [ngForOf]="dateboxes" let-i="index" [ngForTrackBy]="trackByFn">
+      <div class="date-box">
+        <span class="date-box-date">{{box.date}}</span>
+        <span *ngIf="box.goal === undefined" class="date-box-details">{{box.count?box.count:""}}</span>
+        <span *ngIf="box.goal !== undefined && box.count > 0 && box.goal >= box.count" class="date-box-details">{{box.count}}/{{box.goal}}</span>
+        <span *ngIf="box.goal !== undefined && box.count > 0 && box.goal < box.count" class="date-box-details over-goal">{{box.count}}/{{box.goal}}</span>
 
+      </div>
+    </ng-template>
+  </div>
+  <h2 text-center>Monthly Details</h2>
+  <p>Total: {{total}}</p>
+  <p>Daily Average: {{average}}</p>
 </ion-content>

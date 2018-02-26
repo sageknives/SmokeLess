@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { MonthlyGraphPage } from './monthly-graph';
+import { WeeklyGraphPage } from './weekly-graph';
 import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
-    MonthlyGraphPage,
+    WeeklyGraphPage,
   ],
   imports: [
     PipesModule,
-    IonicPageModule.forChild(MonthlyGraphPage),
+    IonicPageModule.forChild(WeeklyGraphPage),
   ],
 })
-export class MonthlyGraphPageModule {}
+export class WeeklyGraphPageModule {}

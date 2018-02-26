@@ -26,11 +26,14 @@ export class HomePage {
   }
 
   ionViewWillEnter(){
-    this.user = this.userService.getCurrentUser();
-    if (!this.user) {
-      this.navCtrl.setRoot('LoginPage');
-      this.toast.show("Please login to continue");
-    }
+    this.userService.getLoggedInUser()
+    .then((user:User)=>{
+      this.user = user;
+      if (!this.user) {
+        this.navCtrl.setRoot('LoginPage');
+        this.toast.show("Please login to continue");
+      }
+    })
   }
 
   attemptToSmoke() {

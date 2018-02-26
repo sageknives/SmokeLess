@@ -1,3 +1,41 @@
 page-calendar {
 
+  .calendar-box{
+    background:white;
+    padding:2vh 0;
+  }
+  .date-box{
+    width:12vw;
+    height:12vw;
+    outline:0;
+    border:1px solid $dark;
+    background-color:$light;
+    margin:1vw 0 1vw 1vw;
+    padding:0;
+    display:inline-block;
+    position: relative;
+  }
+  .date-box-date{
+    font-size:0.8em;
+    color:$dark;
+    position: absolute;
+    top:0;
+    left:0;
+    width:40%;
+    background-color:white;
+    color:$dark;
+    text-align: center;
+    border-right:1px solid $dark;
+    border-bottom:1px solid $dark;
+  }
+  .date-box-details{
+    color:$dark;
+    position: absolute;
+    bottom:0;
+    left:5px;
+  }
+  .date-box-details.over-goal{
+    color:$danger;
+  }
+
 }

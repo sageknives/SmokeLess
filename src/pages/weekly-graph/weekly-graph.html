@@ -5,7 +5,7 @@
     </button>
     <ion-title>{{title}}</ion-title>
     <ion-buttons end>
-      <button ion-button icon-end icon-only (click)="gotoHome()">
+      <button ion-button icon-end icon-only tappable (click)="gotoHome()">
         <ion-icon name="home"></ion-icon>
       </button>
     </ion-buttons>
@@ -30,7 +30,7 @@
     </ion-col>
   </ion-row>
   <canvas #lineCanvas></canvas>
-  <h2 text-center>Monthly Details</h2>
+  <h2 text-center>Weekly Details</h2>
   <p>Total: {{total}}</p>
   <p>Daily Average: {{average}}</p>
 </ion-content>

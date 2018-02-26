@@ -37,9 +37,17 @@ export class ListPage {
     this.refresh();
   }
   refresh(){
-    this.user = this.userService.getCurrentUser();
-    this.smokingService.getAllEntries(this.user.getId())
-    .then((entries:Entry[])=>{
+    this.userService.getLoggedInUser()
+    .then((user:User)=>{
+      this.user = user;
+      if (!this.user) {
+        this.navCtrl.setRoot('LoginPage');
+        this.toast.show("Please login to continue");
+        return;
+      }else{
+        return this.smokingService.getAllEntries(this.user.getId());
+      }
+    }).then((entries:Entry[])=>{
       this.entries = entries.sort((a,b)=>{
         return a.getStart() > b.getStart()? -1 : a.getStart() < b.getStart() ? 1 : 0;
       });
