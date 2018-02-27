@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-navbar color="dark">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title center *ngIf="!hideForm">{{title}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-card *ngIf="user.getId()">
+    <ion-card-content class="info-card-content">
+      <form (ngSubmit)="updateAccount(accountForm)" id="accountForm" #accountForm="ngForm" novalidate>
+        <ion-list no-lines>
+          <ion-row>
+            <ion-col col-12 [class]="true? 'item-background' :'item-background error'">
+              <ion-label stacked color="primary">
+                Username
+                <span class="error-message">
+                  : A Username of 3 to 25 characters is required.
+                </span>
+              </ion-label>
+              <ion-item class="user-input">
+                <ion-input disabled [(ngModel)]="user.username" name="disabledusername" type="text" #disabledusername="ngModel">
+                </ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col col-12 [class]="true ? 'item-background' :'item-background error'">
+              <ion-label stacked color="primary">
+                Start
+                <span class="error-message">
+                  : A start date is required.
+                </span>
+              </ion-label>
+              <span ion-datepicker [value]="chosenStartDate" (ionChanged)="updateStartDate($event)" clear class="ScheduleDate">
+                <ion-item class="item-ion-datetime user-input">
+                  <p>{{user.startDate | toLocalDate}}
+                    <ion-icon name="calendar"></ion-icon>
+                  </p>
+                </ion-item>
+              </span>
+            </ion-col>
+            <ion-col col-12 [class]="startGoal.valid || submitted == false || startGoal.required ? 'item-background' :'item-background error'">
+              <ion-label stacked color="primary">
+                Start Goal
+                <span class="error-message">
+                  : A start goal is required.
+                </span>
+              </ion-label>
+              <ion-item class="user-input">
+                <ion-input [(ngModel)]="user.startGoal" name="startGoal" type="number" #startGoal required minlength="1" maxlength="3" placeholder="20">
+                </ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col col-12 [class]="true ? 'item-background' :'item-background error'">
+              <ion-label stacked color="primary">
+                End
+                <span class="error-message">
+                  : An end date is required.
+                </span>
+              </ion-label>
+              <span ion-datepicker [value]="chosenEndDate" (ionChanged)="updateEndDate($event)" clear class="ScheduleDate">
+                <ion-item class="item-ion-datetime user-input">
+                  <p>{{user.endDate | toLocalDate}}
+                    <ion-icon name="calendar"></ion-icon>
+                  </p>
+                </ion-item>
+              </span>
+            </ion-col>
+            <ion-col col-12 [class]="endGoal.valid || submitted == false || endGoal.required ? 'item-background' :'item-background error'">
+              <ion-label stacked color="primary">
+                End Goal
+                <span class="error-message">
+                  : An end goal is required.
+                </span>
+              </ion-label>
+              <ion-item class="user-input">
+                <ion-input [(ngModel)]="user.endGoal" name="endGoal" type="number" #endGoal required minlength="1" maxlength="3" placeholder="20">
+                </ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-list>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+<ion-footer>
+  <ion-fab bottom right #rightfab>
+    <button ion-fab color="dark" tappable type="submit" form="accountForm">
+      <ion-icon name="checkmark"></ion-icon>
+    </button>
+  </ion-fab>
+</ion-footer>

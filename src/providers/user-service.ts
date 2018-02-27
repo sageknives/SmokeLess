@@ -51,7 +51,7 @@ export class UserService {
         name: 'smokerless.db',
         location: 'default'
       }).then((db: SQLiteObject) => {
-        db.executeSql('CREATE TABLE IF NOT EXISTS user(_id INTEGER PRIMARY KEY, username TEXT, password TEXT, goal INTEGER, loggedIn INTEGER)', {})
+        db.executeSql('CREATE TABLE IF NOT EXISTS user(_id INTEGER PRIMARY KEY, username TEXT, password TEXT, goal INTEGER, loggedIn INTEGER, startDate TEXT, startGoal INTEGER, endDate TEXT, endGoal INTEGER)', {})
           .then((res: any) => {
             this.db = db;
             resolve(db);
@@ -83,8 +83,8 @@ export class UserService {
           return db.executeSql('SELECT * FROM user WHERE username =?', [user.getUsername()]);
         }).then(res => {
           if (res.rows.length > 0) reject("Username already taken");
-          else return db.executeSql('INSERT INTO user VALUES(NULL,?,?,?,?)',
-            [user.getUsername(), user.getPassword(), user.getGoal(), 0]);
+          else return db.executeSql('INSERT INTO user VALUES(NULL,?,?,?,?,?,?,?,?)',
+            [user.getUsername(), user.getPassword(), user.getGoal(), 0, "", user.getGoal(), "", 0]);
         }).then(res => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -121,6 +121,10 @@ export class UserService {
               username: result.username,
               password: result.password,
               goal: result.goal,
+              startDate: result.startDate,
+              startGoal: result.startGoal,
+              endDate: result.endDate,
+              endGoal: result.endGoal,
               loggedIn: true
             });
             return db.executeSql('UPDATE user SET loggedIn =? WHERE _id =?', [1, dbUser.getId()]);
@@ -153,7 +157,11 @@ export class UserService {
               username: result.username,
               password: result.password,
               goal: result.goal,
-              loggedIn: result.loggedIn
+              loggedIn: result.loggedIn,
+              startDate: result.startDate,
+              startGoal: result.startGoal,
+              endDate: result.endDate,
+              endGoal: result.endGoal
             });
             this.closeDatabase()
               .then((wasClosed: boolean) => {
@@ -194,8 +202,38 @@ export class UserService {
 
   saveUserGoal(user: User): Promise<User> {
     return new Promise((resolve, reject) => {
-      resolve(user);
+      let db: SQLiteObject;
+      this.getDatabase()
+        .then((database: SQLiteObject) => {
+          db = database;
+        //   return this.updateDataBase(db);
+        // }).then((wasUpdate:boolean)=>{
+          return db.executeSql('UPDATE user SET startDate =?, startGoal =?, endDate =?, endGoal =? WHERE loggedIn =?',
+            [user.getStartDate(), user.getStartGoal(), user.getEndDate(), user.getEndGoal(), 1]);
+        }).then((res: any) => {
+          return this.closeDatabase();
+        }).then((wasClosed: boolean) => {
+          resolve(user);
+        }).catch((error: any) => {
+          console.log("noo!");
+          reject(error);
+        });
     });
+  }
+
+  updateDataBase(db: SQLiteObject): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      db.executeSql('ALTER TABLE user ADD COLUMN startGoal INTEGER', {})
+        .then((res: any) => {
+          return db.executeSql('ALTER TABLE user ADD COLUMN startDate TEXT', {});
+        }).then((res: any) => {
+          return db.executeSql('ALTER TABLE user ADD COLUMN endGoal INTEGER', {});
+        }).then((res: any) => {
+          return db.executeSql('ALTER TABLE user ADD COLUMN endDate TEXT', {});
+        }).then((res: any) => {
+          resolve(true);
+        }).catch(reject);
+    })
   }
 
   getCurrentUser(): User {

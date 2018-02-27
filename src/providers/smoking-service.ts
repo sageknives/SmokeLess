@@ -165,6 +165,32 @@ export class SmokingService {
   }
 
   /**
+   * get Entries between dates
+   * @param userId {number} the user id 
+   * @param start {string} the start iso string
+   * @param end {string} the end iso string
+   */
+  public getDayCount(userId: number, start: string, end: string): Promise<number[]> {
+    return new Promise((resolve, reject) => {
+      let counts: number[] = new Array<number>();
+      this.getDatabase()
+        .then((db: SQLiteObject) => {
+          return db.executeSql(
+            'SELECT date(entry_time_stamp) as date, count(*) as count FROM smoke WHERE user_id =? AND entry_time_stamp >= ? AND entry_time_stamp < ?', [userId, start, end]);
+        }).then(res => {
+          for (var i = 0; i < res.rows.length; i++) {
+            counts[res.rows.item(i).date] = res.rows.item(i).count;
+          }
+          return this.closeDatabase();
+        }).then((wasClosed: boolean) => {
+          resolve(counts);
+        }).catch(e => {
+          reject("There was a problem getting your entries");
+        });
+    });
+  }
+
+  /**
    * get Entries all
    * @param id {number} the smoke id 
    */

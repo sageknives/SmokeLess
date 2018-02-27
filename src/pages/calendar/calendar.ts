@@ -8,7 +8,7 @@ import { SmokingService } from '../../providers/smoking-service';
 import { Entry } from '../../models/smoke/entry';
 
 interface DateBox {
-  date: number,
+  date: number | string,
   count: number,
   goal?: number
 }
@@ -23,6 +23,7 @@ export class CalendarPage {
   users: User[] = new Array<User>();
   private user: User = User.fromJSON({});
   selectedDate: string = moment(Date.now()).startOf('day').toISOString();
+  dayGoals = new Array<number>();
   dateboxes: DateBox[] = new Array<DateBox>();
   total: number = 0;
   average: number = 0;
@@ -64,6 +65,7 @@ export class CalendarPage {
           let today = moment(this.selectedDate);
           while (today.get('date') !== 1) today.add(-1, 'day');
           this.selectedDate = today.startOf('day').format();
+          this.dayGoals = this.user.getDayGoals();
           this.setUpAndDisplayCalendar();
         }
       })
@@ -72,6 +74,7 @@ export class CalendarPage {
   setUpAndDisplayCalendar() {
     let total: number = 0;
     let startMoment = moment(this.selectedDate).startOf('day');
+    let month = startMoment.get('month');
     let endMoment = moment(startMoment).add(1, 'month');
     let monthLength = startMoment.daysInMonth();
     let start = startMoment.toISOString();
@@ -82,7 +85,8 @@ export class CalendarPage {
     while (this.dateboxes.length > 0) this.dateboxes.pop();
 
     for (let i = 0; i < monthDayCount; i++) {
-      this.dateboxes.push({ date: startMoment.get('date'), count: 0,goal:this.user.getGoal() });
+      let dateIndex = startMoment.get('year')+'-'+this.toDoubleDigit(startMoment.get('month')+1)+'-'+this.toDoubleDigit(startMoment.get('date'));
+      this.dateboxes.push({ date: startMoment.get('month') === month?startMoment.get('date'):"X", count: 0,goal:this.dayGoals[0]?this.dayGoals[0]:this.dayGoals[dateIndex] });
       startMoment.add(1, 'day');
     }
 
@@ -99,6 +103,11 @@ export class CalendarPage {
         this.total = entries.length;
         this.average = Number.parseFloat((this.total / monthLength).toFixed(2));
       }).catch(this.toast.showError);
+  }
+
+  toDoubleDigit(num:number):string{
+    if(num < 10) return "0"+num;
+    else return num + "";
   }
 
   gotoAnalytics() {
