@@ -34,7 +34,7 @@ export class MyApp {
       { title: 'Calendar', component: 'TabsPage', param: { id: 2 } },
       { title: 'Daily Graph', component: 'GraphTabsPage'},
       { title: 'Weekly Graph', component: 'GraphTabsPage', param: { id: 1 } },
-      { title: 'Monthly Graph', component: 'GraphTabsPage', param: { id: 1 } },
+      { title: 'Monthly Graph', component: 'GraphTabsPage', param: { id: 2 } },
       { title: 'Preferences', component: undefined },
       { title: 'Account', component: 'AccountPage' },
     ];
@@ -62,7 +62,7 @@ export class MyApp {
         }).catch(error => {
           console.log('failed to logout.');
         });
-    } else if (page.component === 'TabsPage' || page.component === 'GraphTabsPage') {
+    } else if (page.component === 'TabsPage') {
       this.nav.setRoot(page.component, page.param);
     } else {
       this.nav.push(page.component, page.param);
