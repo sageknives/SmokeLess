@@ -43,3 +43,26 @@
   background:$transparent; 
   box-shadow:0 0 0 0 $transparent!important; 
 }
+
+.item-background .error-message {
+  display: none;
+  color:$light;
+}
+
+.item-background.error {
+  background-color: $danger;
+}
+
+.item-background.error ion-label {
+  color: $light;
+}
+
+.item-background ion-label{
+  font-size:1.5rem!important;
+  margin:0!important;
+}
+
+.item-background.error .error-message {
+  display: inline-block;
+}
+

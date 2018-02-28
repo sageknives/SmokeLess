@@ -15,7 +15,7 @@
         <ion-list no-lines>
           <ion-row>
             <ion-col col-12 [class]="true? 'item-background' :'item-background error'">
-              <ion-label stacked color="primary">
+              <ion-label stacked color="dark">
                 Username
                 <span class="error-message">
                   : A Username of 3 to 25 characters is required.
@@ -27,7 +27,7 @@
               </ion-item>
             </ion-col>
             <ion-col col-12 [class]="true ? 'item-background' :'item-background error'">
-              <ion-label stacked color="primary">
+              <ion-label stacked color="dark">
                 Start
                 <span class="error-message">
                   : A start date is required.
@@ -41,20 +41,20 @@
                 </ion-item>
               </span>
             </ion-col>
-            <ion-col col-12 [class]="startGoal.valid || submitted == false || startGoal.required ? 'item-background' :'item-background error'">
-              <ion-label stacked color="primary">
+            <ion-col col-12 [class]="startGoalInput.valid || !submitted || startGoalInput.required ? 'item-background' :'item-background error'">
+              <ion-label stacked color="dark">
                 Start Goal
                 <span class="error-message">
-                  : A start goal is required.
+                   is required.
                 </span>
               </ion-label>
               <ion-item class="user-input">
-                <ion-input [(ngModel)]="user.startGoal" name="startGoal" type="number" #startGoal required minlength="1" maxlength="3" placeholder="20">
+                <ion-input [(ngModel)]="user.startGoal" name="startGoalInput" type="number" #startGoalInput required step="1" min="0" max="100" placeholder="20">
                 </ion-input>
               </ion-item>
             </ion-col>
             <ion-col col-12 [class]="true ? 'item-background' :'item-background error'">
-              <ion-label stacked color="primary">
+              <ion-label stacked color="dark">
                 End
                 <span class="error-message">
                   : An end date is required.
@@ -68,15 +68,15 @@
                 </ion-item>
               </span>
             </ion-col>
-            <ion-col col-12 [class]="endGoal.valid || submitted == false || endGoal.required ? 'item-background' :'item-background error'">
-              <ion-label stacked color="primary">
+            <ion-col col-12 [class]="endGoalInput.valid || !submitted || endGoalInput.required ? 'item-background' :'item-background error'">
+              <ion-label stacked color="dark">
                 End Goal
                 <span class="error-message">
-                  : An end goal is required.
+                   is required.
                 </span>
               </ion-label>
               <ion-item class="user-input">
-                <ion-input [(ngModel)]="user.endGoal" name="endGoal" type="number" #endGoal required minlength="1" maxlength="3" placeholder="20">
+                <ion-input [(ngModel)]="user.endGoal" name="endGoalInput" type="number" #endGoalInput required step="1" min="0" max="100" placeholder="20">
                 </ion-input>
               </ion-item>
             </ion-col>

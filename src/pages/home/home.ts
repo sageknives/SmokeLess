@@ -63,7 +63,7 @@ export class HomePage {
   }
 
   getCount() {
-    let start = moment().startOf('day').toISOString();
+    let start = moment(Date.now()).startOf('day').toISOString();
     let end = moment(start).add(1, 'day').toISOString();
     this.smokingService.getDayCount(this.user.getId(),start,end)
       .then((dayCounts: number[]) => {

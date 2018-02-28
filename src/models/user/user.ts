@@ -56,8 +56,11 @@ export class User{
 
   public getDayGoal(dateString:string):number{
     if(!this.startDate) return this.goal;
+    let todayMoment = moment(dateString);
     let startMoment = moment(this.startDate);
+    if(startMoment.isAfter(todayMoment)) return this.goal;
     let endMoment = moment(this.endDate);
+    if(endMoment.isBefore(todayMoment)) return this.endGoal;
     let dateDifference = endMoment.diff(startMoment,'days');
     let countDiffence = this.startGoal - this.endGoal;
     let dayCounts = new Array<number>();

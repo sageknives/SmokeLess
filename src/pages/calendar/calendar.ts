@@ -85,17 +85,23 @@ export class CalendarPage {
     while (this.dateboxes.length > 0) this.dateboxes.pop();
 
     for (let i = 0; i < monthDayCount; i++) {
-      let dateIndex = startMoment.get('year')+'-'+this.toDoubleDigit(startMoment.get('month')+1)+'-'+this.toDoubleDigit(startMoment.get('date'));
-      this.dateboxes.push({ date: startMoment.get('month') === month?startMoment.get('date'):"X", count: 0,goal:this.dayGoals[0]?this.dayGoals[0]:this.dayGoals[dateIndex] });
+      let dateIndex = startMoment.get('year') + '-' + this.toDoubleDigit(startMoment.get('month') + 1) + '-' + this.toDoubleDigit(startMoment.get('date'));
+      this.dateboxes.push({
+        date: startMoment.get('month') === month
+          ? startMoment.get('date')
+          : "X",
+        count: 0,
+        goal: this.user.getDayGoal(startMoment.toISOString())
+      });
       startMoment.add(1, 'day');
     }
 
     this.smokingService.getEntries(this.user.getId(), start, end)
       .then((entries: Entry[]) => {
-        entries.forEach(entry=>{
-          let box = this.dateboxes.find(box=>box.date === moment(entry.getStart()).get('date'));
-          if(box){
-            if(!box.count) box.count =1;
+        entries.forEach(entry => {
+          let box = this.dateboxes.find(box => box.date === moment(entry.getStart()).get('date'));
+          if (box) {
+            if (!box.count) box.count = 1;
             else box.count++;
           }
         })
@@ -105,8 +111,8 @@ export class CalendarPage {
       }).catch(this.toast.showError);
   }
 
-  toDoubleDigit(num:number):string{
-    if(num < 10) return "0"+num;
+  toDoubleDigit(num: number): string {
+    if (num < 10) return "0" + num;
     else return num + "";
   }
 
