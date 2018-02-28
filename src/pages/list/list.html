@@ -18,6 +18,7 @@
     <ng-template ngFor let-entry [ngForOf]="entries" let-i="index" [ngForTrackBy]="trackByFn">
       <ion-item tappable (click)="goToEntry(entry)">{{entry.start | toLocalDateTime}}</ion-item>
     </ng-template>
+    <button ion-button tappable color="danger" full clear (click)="getMore()">Load Previous Day</button>
   </ion-list>
 </ion-content>
 <ion-footer>
