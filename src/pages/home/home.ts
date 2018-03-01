@@ -5,6 +5,7 @@ import { User } from '../../models/user/user';
 import { ToastService } from '../../providers/toast-service';
 import { SmokingService } from '../../providers/smoking-service';
 import * as moment from 'moment';
+import { Entry } from '../../models/smoke/entry';
 
 
 @IonicPage()
@@ -65,9 +66,10 @@ export class HomePage {
   getCount() {
     let start = moment(Date.now()).startOf('day').toISOString();
     let end = moment(start).add(1, 'day').toISOString();
-    this.smokingService.getDayCount(this.user.getId(),start,end)
-      .then((dayCounts: number[]) => {
-        this.total = dayCounts[start.split('T')[0]];
+    this.smokingService.getEntries(this.user.getId(),start,end)
+      .then((entries: Entry[]) => {
+        
+        this.total = entries.length;;
         this.total = this.total?this.total:0;
         this.goal = this.user.getDayGoal(start);
       }).catch(this.toast.showError);
