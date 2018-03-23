@@ -27,6 +27,8 @@ export class CalendarPage {
   dateboxes: DateBox[] = new Array<DateBox>();
   total: number = 0;
   average: number = 0;
+  
+
 
   constructor(
     public navCtrl: NavController,
@@ -70,6 +72,7 @@ export class CalendarPage {
         }
       })
   }
+ 
 
   setUpAndDisplayCalendar() {
     let total: number = 0;
@@ -95,7 +98,6 @@ export class CalendarPage {
       });
       startMoment.add(1, 'day');
     }
-
     this.smokingService.getEntries(this.user.getId(), start, end)
       .then((entries: Entry[]) => {
         entries.forEach(entry => {
@@ -107,7 +109,9 @@ export class CalendarPage {
         })
         console.log("days", this.dateboxes);
         this.total = entries.length;
-        this.average = Number.parseFloat((this.total / monthLength).toFixed(2));
+        let recordedDays = this.dateboxes.filter(d=>d.count > 0);
+        this.average = Number.parseFloat((this.total / recordedDays.length).toFixed(2));
+        if(Number.isNaN(this.average)) this.average = 0;
       }).catch(this.toast.showError);
   }
 

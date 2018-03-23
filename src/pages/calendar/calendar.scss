@@ -2,13 +2,13 @@ page-calendar {
 
   .calendar-box{
     background:white;
-    padding:2vh 0;
+    padding:1vw 0;
     font-size: 0;
     text-align:center;
   }
   .date-box{
-    width:14vw;
-    height:14vw;
+    width:calc(100vw/7);
+    height:calc(100vw/7);
     outline:0;
     border:1px solid $dark;
     background-color:$light;
@@ -34,7 +34,8 @@ page-calendar {
     color:$dark;
     position: absolute;
     bottom:0;
-    left:5px;
+    left:0;
+    right:0;
   }
   .date-box-details.over-goal{
     color:$danger;

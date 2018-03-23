@@ -19,6 +19,9 @@ export class HomePage {
   private user: User;
   private total: number = 0;
   private goal: number = 0;
+  private now: number = Date.now();
+  private countDown: number;
+  private lastSmokeTimeStamp: number;
 
   constructor(
     private navCtrl: NavController,
@@ -40,6 +43,12 @@ export class HomePage {
         }
         this.getCount();
       })
+    this.countDown = setInterval(() => {
+      this.now = Date.now();
+    }, 1000);
+  }
+  ionViewWillUnload() {
+    if (this.countDown) clearInterval(this.countDown);
   }
 
   attemptToSmoke() {
@@ -55,10 +64,10 @@ export class HomePage {
   smokeNow() {
     this.smokingService.addEntry(new Date().toISOString(), this.user.getId())
       .then((wasAdded) => {
-        if (wasAdded){
+        if (wasAdded) {
           this.toast.show("Smoking");
           this.getCount();
-        } 
+        }
         else this.toast.show("Failed to add entry, Please try again.");
       }).catch(this.toast.showError);
   }
@@ -66,12 +75,14 @@ export class HomePage {
   getCount() {
     let start = moment(Date.now()).startOf('day').toISOString();
     let end = moment(start).add(1, 'day').toISOString();
-    this.smokingService.getEntries(this.user.getId(),start,end)
+    this.smokingService.getEntries(this.user.getId(), start, end)
       .then((entries: Entry[]) => {
-        
+
         this.total = entries.length;;
-        this.total = this.total?this.total:0;
+        this.total = this.total ? this.total : 0;
         this.goal = this.user.getDayGoal(start);
+        entries.sort((a, b) => a.getStart() === b.getStart() ? 0 : a.getStart() < b.getStart() ? 1 : -1);
+        if (entries[0]) this.lastSmokeTimeStamp = new Date(entries[0].getStart()).getTime();
       }).catch(this.toast.showError);
   }
 

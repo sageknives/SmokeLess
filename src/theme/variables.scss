@@ -37,6 +37,7 @@ $secondary: #32db64;
 $danger: #8b0606;
 $light: #f4f4f4;
 $dark: #222;
+$grey: rgb(78, 78, 78);
 $transparent: rgba(0,0,0,0);
 
 $colors: (
@@ -44,7 +45,8 @@ $colors: (
   secondary:  $secondary,
   danger:     $danger,
   light:      $light,
-  dark:       $dark
+  dark:       $dark,
+  grey:     $grey
 );
 
 

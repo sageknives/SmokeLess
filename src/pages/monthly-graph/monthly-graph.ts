@@ -82,7 +82,9 @@ export class MonthlyGraphPage {
         console.log("days", this.dayCounts);
         this.graphData();
         this.total = total;
-        this.average = Number.parseFloat((total / daysInMonth).toFixed(2));
+        let daysMarked = this.dayCounts.filter(d=> d.count > 0);
+        this.average = Number.parseFloat((total / daysMarked.length).toFixed(2));
+        if(Number.isNaN(this.average)) this.average = 0;
       }).catch(this.toast.showError); 
   }
 

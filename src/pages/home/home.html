@@ -13,6 +13,13 @@
 </ion-header>
 
 <ion-content>
-    <button tappable (click)="attemptToSmoke()" class="smoke-button">Smoke</button>
-    <p>Total: {{total}} / {{goal}}</p>
+  <ion-row class="stat-box">
+    <ion-col col-6>
+      Total/Goal: {{total}} / {{goal}}
+    </ion-col>
+    <ion-col col-6 *ngIf="lastSmokeTimeStamp">
+      {{now| formatToHourMinute: lastSmokeTimeStamp }} Since Last Smoke
+    </ion-col>
+  </ion-row>
+  <button tappable (click)="attemptToSmoke()" class="smoke-button">Smoke</button>
 </ion-content>

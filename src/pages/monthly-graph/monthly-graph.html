@@ -14,9 +14,17 @@
 
 
 <ion-content>
+  <ion-row class="stat-box">
+    <ion-col col-6>
+      Total: {{total}}
+    </ion-col>
+    <ion-col col-6>
+      Daily Average: {{average}}
+    </ion-col>
+  </ion-row>
   <ion-row>
     <ion-col col-2>
-      <button ion-button icon-end icon-only tappable (click)="prevDate()" color="light" class="full-height-button"  full>
+      <button ion-button icon-end icon-only tappable (click)="prevDate()" color="light" class="full-height-button" full>
         <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-col>
@@ -30,7 +38,4 @@
     </ion-col>
   </ion-row>
   <canvas #lineCanvas></canvas>
-  <h2 text-center>Monthly Details</h2>
-  <p>Total: {{total}}</p>
-  <p>Daily Average: {{average}}</p>
 </ion-content>
