@@ -73,8 +73,8 @@ export class ListPage {
     this.navCtrl.push('EntryPage');
   }
 
-  gotoAnalytics() {
-    this.appCtrl.getRootNav().push('GraphTabsPage')
+  gotoAccount() {
+    this.appCtrl.getRootNav().push('AccountPage');
   }
 
   getMore() {

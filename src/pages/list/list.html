@@ -5,8 +5,8 @@
       </button>
       <ion-title>{{title}}</ion-title>
       <ion-buttons end>
-        <button ion-button icon-end icon-only (click)="gotoAnalytics()">
-          <ion-icon name="analytics"></ion-icon>
+        <button ion-button icon-end icon-only (click)="gotoAccount()">
+          <ion-icon name="contact"></ion-icon>
         </button>
       </ion-buttons>
     </ion-navbar>
@@ -16,7 +16,7 @@
 <ion-content>
   <ion-list>
     <ng-template ngFor let-entry [ngForOf]="entries" let-i="index" [ngForTrackBy]="trackByFn">
-      <ion-item tappable (click)="goToEntry(entry)">{{entry.start | toLocalDateTime}}</ion-item>
+      <ion-item tappable (click)="goToEntry(entry)">{{entry.entry_time_stamp | toLocalDateTime}}</ion-item>
     </ng-template>
     <button ion-button tappable color="danger" full clear (click)="getMore()">Load Previous Day</button>
   </ion-list>

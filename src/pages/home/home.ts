@@ -75,8 +75,8 @@ export class HomePage {
       }).catch(this.toast.showError);
   }
 
-  gotoAnalytics() {
-    this.appCtrl.getRootNav().push('GraphTabsPage')
+  gotoAccount() {
+    this.appCtrl.getRootNav().push('AccountPage');
   }
 
 }

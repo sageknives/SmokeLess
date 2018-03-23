@@ -5,58 +5,52 @@ import { Platform } from 'ionic-angular/platform/platform';
 
 import { AppConfig } from '../app/app-config';
 import { User } from '../models/user/user';
+import { SqlCommands } from '../models/database/sql-commands';
+import { UniversalSQLiteInterface, MockSQLiteObject } from '../models/database/mock-database';
 
 @Injectable()
 export class UserService {
   private user: User;
-  private db: SQLiteObject = null;
+  private db: UniversalSQLiteInterface = null;
   constructor(
     private platform: Platform,
     private sqLite: SQLite
   ) {
   }
 
-  // getDatabase(): Promise<SQLiteObject> {
-  //   return new Promise((resolve, reject) => {
-  //     this.platform.ready()
-  //       .then(() => {
-  //         return this.sqLite.create({
-  //           name: 'smokerless.db',
-  //           location: 'default'
-  //         });
-  //       }).then((db: SQLiteObject) => {
-  //         db.executeSql('CREATE TABLE IF NOT EXISTS entry(rowid INTEGER PRIMARY KEY, date TEXT)', {})
-  //           .then((res: any) => {
-  //             resolve(db);
-  //           }).catch(reject);
-  //       }).catch(reject);
-  //   });
-  // }
-
-  getDatabase(): Promise<SQLiteObject> {
+  getDatabase(): Promise<UniversalSQLiteInterface> {
     return new Promise((resolve, reject) => {
       this.platform.ready()
         .then(() => {
           if (this.db) return this.db;
           else return this.openDatabase();
-        }).then((db: SQLiteObject) => {
+        }).then((db: UniversalSQLiteInterface) => {
           resolve(db);
         }).catch(reject);
     });
   }
 
-  private openDatabase(): Promise<SQLiteObject> {
+  private openDatabase(): Promise<UniversalSQLiteInterface> {
     return new Promise((resolve, reject) => {
-      this.sqLite.create({
-        name: 'smokerless.db',
-        location: 'default'
-      }).then((db: SQLiteObject) => {
-        db.executeSql('CREATE TABLE IF NOT EXISTS user(_id INTEGER PRIMARY KEY, username TEXT, password TEXT, goal INTEGER, loggedIn INTEGER, startDate TEXT, startGoal INTEGER, endDate TEXT, endGoal INTEGER)', {})
+      if (this.platform.is('cordova')) {
+        this.sqLite.create({
+          name: 'smokerless.db',
+          location: 'default'
+        }).then((db: SQLiteObject) => {
+          db.executeSql(SqlCommands.CREATE_USER_TABLE, {})
+            .then((res: any) => {
+              this.db = db;
+              resolve(db);
+            }).catch(reject);
+        }).catch(reject);
+      } else {
+        let db = new MockSQLiteObject();
+        db.executeSql(SqlCommands.CREATE_USER_TABLE, {})
           .then((res: any) => {
             this.db = db;
             resolve(db);
           }).catch(reject);
-      }).catch(reject);
+      }
     })
   }
 
@@ -78,12 +72,12 @@ export class UserService {
     return new Promise((resolve, reject) => {
       let db;
       this.getDatabase()
-        .then((database: SQLiteObject) => {
+        .then((database: UniversalSQLiteInterface) => {
           db = database;
-          return db.executeSql('SELECT * FROM user WHERE username =?', [user.getUsername()]);
+          return db.executeSql(SqlCommands.SELECT_ALL_FROM_USER_WHERE_USERNAME, [user.getUsername()]);
         }).then(res => {
           if (res.rows.length > 0) reject("Username already taken");
-          else return db.executeSql('INSERT INTO user VALUES(NULL,?,?,?,?,?,?,?,?)',
+          else return db.executeSql(SqlCommands.INSERT_USER,
             [user.getUsername(), user.getPassword(), user.getGoal(), 0, "", user.getGoal(), "", 0]);
         }).then(res => {
           return this.closeDatabase();
@@ -97,13 +91,13 @@ export class UserService {
 
   login(user: User): Promise<User> {
     return new Promise((resolve, reject) => {
-      let db: SQLiteObject;
+      let db: UniversalSQLiteInterface;
       let dbUser: User;
       this.getDatabase()
-        .then((database: SQLiteObject) => {
+        .then((database: UniversalSQLiteInterface) => {
           db = database;
           return db.executeSql(
-            'SELECT * FROM user WHERE username =? AND password =?',
+            SqlCommands.SELECT_ALL_FROM_USER_WHERE_USERNAME_AND_PASSWORD,
             [user.getUsername(), user.getPassword()]);
         }).then((res: any) => {
           if (res.rows.length === 0) {
@@ -127,7 +121,7 @@ export class UserService {
               endGoal: result.endGoal,
               loggedIn: true
             });
-            return db.executeSql('UPDATE user SET loggedIn =? WHERE _id =?', [1, dbUser.getId()]);
+            return db.executeSql(SqlCommands.UPDATE_USER_LOGGED_IN_WHERE_ID, [1, dbUser.getId()]);
           }
         }).then((res: any) => {
           return this.closeDatabase();
@@ -146,9 +140,9 @@ export class UserService {
   getLoggedInUser(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.getDatabase()
-        .then((db: SQLiteObject) => {
+        .then((db: UniversalSQLiteInterface) => {
           return db.executeSql(
-            'SELECT * FROM user WHERE loggedIn =?', [1]);
+            SqlCommands.SELECT_ALL_FROM_USER_WHERE_LOGGEDIN, [1]);
         }).then((res: any) => {
           if (res.rows.length === 1) {
             let result = res.rows.item(0);
@@ -184,11 +178,11 @@ export class UserService {
 
   logout(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      let db: SQLiteObject;
+      let db: UniversalSQLiteInterface;
       this.getDatabase()
-        .then((database: SQLiteObject) => {
+        .then((database: UniversalSQLiteInterface) => {
           db = database;
-          return db.executeSql('UPDATE user SET loggedIn =? WHERE loggedIn =?', [0, 1]);
+          return db.executeSql(SqlCommands.UPDATE_USER_LOGGED_IN_WHERE_LOGGED_IN, [0, 1]);
         }).then((res: any) => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -202,13 +196,13 @@ export class UserService {
 
   saveUserGoal(user: User): Promise<User> {
     return new Promise((resolve, reject) => {
-      let db: SQLiteObject;
+      let db: UniversalSQLiteInterface;
       this.getDatabase()
-        .then((database: SQLiteObject) => {
+        .then((database: UniversalSQLiteInterface) => {
           db = database;
-        //   return this.updateDataBase(db);
-        // }).then((wasUpdate:boolean)=>{
-          return db.executeSql('UPDATE user SET startDate =?, startGoal =?, endDate =?, endGoal =? WHERE loggedIn =?',
+          //   return this.updateDataBase(db);
+          // }).then((wasUpdate:boolean)=>{
+          return db.executeSql(SqlCommands.UPDATE_USER_STARTDATE_STARTGOAL_ENDDATE_ENDGOAL_WHERE_LOGGED_IN,
             [user.getStartDate(), user.getStartGoal(), user.getEndDate(), user.getEndGoal(), 1]);
         }).then((res: any) => {
           return this.closeDatabase();
@@ -242,10 +236,10 @@ export class UserService {
 
   getUsers(): Promise<User[]> {
     return new Promise((resolve, reject) => {
-      let db: SQLiteObject;
+      let db: UniversalSQLiteInterface;
       let users: User[] = new Array<User>();
       this.getDatabase()
-        .then((database: SQLiteObject) => {
+        .then((database: UniversalSQLiteInterface) => {
           db = database;
           return db.executeSql(
             'SELECT * FROM user', []);

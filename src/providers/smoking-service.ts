@@ -5,17 +5,19 @@ import { Platform } from 'ionic-angular/platform/platform';
 
 import { AppConfig } from '../app/app-config';
 import { Entry } from '../models/smoke/entry';
+import { SqlCommands } from '../models/database/sql-commands';
+import { MockSQLiteObject, UniversalSQLiteInterface } from '../models/database/mock-database';
 
 @Injectable()
 export class SmokingService {
-  private db: SQLiteObject = null;
+  private db: UniversalSQLiteInterface = null;
   constructor(
     private platform: Platform,
     private sqLite: SQLite
   ) {
   }
 
-  getDatabase(): Promise<SQLiteObject> {
+  getDatabase(): Promise<UniversalSQLiteInterface> {
     return new Promise((resolve, reject) => {
       this.platform.ready()
         .then(() => {
@@ -28,18 +30,29 @@ export class SmokingService {
     });
   }
 
-  private openDatabase(): Promise<SQLiteObject> {
+  private openDatabase(): Promise<UniversalSQLiteInterface> {
     return new Promise((resolve, reject) => {
-      this.sqLite.create({
-        name: 'smokerless.db',
-        location: 'default'
-      }).then((db: SQLiteObject) => {
-        db.executeSql('CREATE TABLE IF NOT EXISTS smoke(_id INTEGER PRIMARY KEY, entry_time_stamp TEXT, user_id INTEGER)', {})
+      if (this.platform.is('cordova')) {
+        this.sqLite.create({
+          name: 'smokerless.db',
+          location: 'default'
+        }).then((db: SQLiteObject) => {
+          db.executeSql(SqlCommands.CREATE_SMOKE_TABLE, {})
+            .then((res: any) => {
+              this.db = db;
+              resolve(db);
+            }).catch(reject);
+        }).catch(reject);
+      } else {
+        let db = new MockSQLiteObject();
+        db.executeSql(SqlCommands.CREATE_SMOKE_TABLE, {})
           .then((res: any) => {
+            this.db = db;
             resolve(db);
           }).catch(reject);
-      }).catch(reject);
+      }
     })
+
   }
 
   private closeDatabase(): Promise<boolean> {
@@ -61,9 +74,9 @@ export class SmokingService {
     return new Promise((resolve, reject) => {
       let db;
       this.getDatabase()
-        .then((database: SQLiteObject) => {
+        .then((database: UniversalSQLiteInterface) => {
           db = database;
-          return db.executeSql('INSERT INTO smoke VALUES(NULL,?,?)',
+          return db.executeSql(SqlCommands.INSERT_SMOKE,
             [date, userId]);
         }).then(res => {
           return this.closeDatabase();
@@ -83,9 +96,9 @@ export class SmokingService {
     return new Promise((resolve, reject) => {
       let entry: Entry;
       this.getDatabase()
-        .then((db: SQLiteObject) => {
+        .then((db: UniversalSQLiteInterface) => {
           return db.executeSql(
-            'SELECT * FROM smoke WHERE _id =?', [id]);
+            SqlCommands.SELECT_ALL_FROM_SMOKE_WHERE_ID, [id]);
         }).then(res => {
           let result = res.rows.item(0);
           entry = new Entry(result._id, result.entry_time_stamp, result.user_id);
@@ -106,8 +119,8 @@ export class SmokingService {
     return new Promise((resolve, reject) => {
       let entry: Entry;
       this.getDatabase()
-        .then((db: SQLiteObject) => {
-          return db.executeSql('UPDATE smoke SET entry_time_stamp =? WHERE _id =?', [date, id])
+        .then((db: UniversalSQLiteInterface) => {
+          return db.executeSql(SqlCommands.UPDATE_SMOKE_ENTRY_TIME_STAMP_WHERE_ID, [date, id])
         }).then(res => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -126,8 +139,8 @@ export class SmokingService {
     return new Promise((resolve, reject) => {
       let entry: Entry;
       this.getDatabase()
-        .then((db: SQLiteObject) => {
-          return db.executeSql('DELETE FROM smoke WHERE _id =?', [id])
+        .then((db: UniversalSQLiteInterface) => {
+          return db.executeSql(SqlCommands.DELETE_SMOKE_WHERE_ID, [id])
         }).then(res => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -148,9 +161,9 @@ export class SmokingService {
     return new Promise((resolve, reject) => {
       let entries: Entry[] = new Array<Entry>();
       this.getDatabase()
-        .then((db: SQLiteObject) => {
+        .then((db: UniversalSQLiteInterface) => {
           return db.executeSql(
-            'SELECT * FROM smoke WHERE user_id =? AND entry_time_stamp >= ? AND entry_time_stamp < ?', [userId, start, end]);
+            SqlCommands.SELECT_ALL_FROM_SMOKE_WHERE_USER_ID_BETWEEN_START_END, [userId, start, end]);
         }).then(res => {
           for (var i = 0; i < res.rows.length; i++) {
             entries.push(new Entry(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).user_id));
@@ -174,9 +187,9 @@ export class SmokingService {
     return new Promise((resolve, reject) => {
       let counts: number[] = new Array<number>();
       this.getDatabase()
-        .then((db: SQLiteObject) => {
+        .then((db: UniversalSQLiteInterface) => {
           return db.executeSql(
-            'SELECT date(entry_time_stamp) as date, count(*) as count FROM smoke WHERE user_id =? AND entry_time_stamp >= ? AND entry_time_stamp < ?', [userId, start, end]);
+            SqlCommands.SELECT_DATE_COUNT_FROM_SMOKE_WHERE_USER_ID_BETWEEN_START_END, [userId, start, end]);
         }).then(res => {
           for (var i = 0; i < res.rows.length; i++) {
             counts[res.rows.item(i).date] = res.rows.item(i).count;
@@ -198,9 +211,9 @@ export class SmokingService {
     return new Promise((resolve, reject) => {
       let entries: Entry[] = new Array<Entry>();
       this.getDatabase()
-        .then((db: SQLiteObject) => {
+        .then((db: UniversalSQLiteInterface) => {
           return db.executeSql(
-            'SELECT * FROM smoke WHERE user_id =?', [userId]);
+            SqlCommands.SELECT_ALL_FROM_SMOKE_WHERE_USER_ID, [userId]);
         }).then(res => {
           for (var i = 0; i < res.rows.length; i++) {
             entries.push(new Entry(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).user_id));
@@ -242,7 +255,7 @@ export class SmokingService {
   // }
 }
 
-interface HourCount{
-  hour:number;
-  count:number;
+interface HourCount {
+  hour: number;
+  count: number;
 }

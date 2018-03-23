@@ -10,7 +10,8 @@ export class GraphTabsPage {
   tab1Root = 'DailyGraphPage';
   tab2Root = 'WeeklyGraphPage';
   tab3Root = 'MonthlyGraphPage';
-  @ViewChild('myTabs') tabRef: Tabs; 
+  @ViewChild('graphTabs') tabRef2: Tabs; 
+  color="primary";
 
   constructor(
     private navParams:NavParams
@@ -20,6 +21,6 @@ export class GraphTabsPage {
   }
   ionViewWillEnter() {
     let selectedTab = this.navParams.get('id');
-    if(selectedTab !== undefined) this.tabRef.select(selectedTab?selectedTab:0, {}); // In the method where you want set tab.
+    if(selectedTab !== undefined) this.tabRef2.select(selectedTab?selectedTab:0, {}); // In the method where you want set tab.
   }
 }

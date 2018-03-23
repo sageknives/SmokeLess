@@ -2,17 +2,17 @@ export class Entry{
   
   constructor(
     private _id: number,
-    private start: string,
+    private entry_time_stamp: string,
     private userId: number,
     private _rev?: string
   ) { }
 
   getStart():string{
-    return this.start;
+    return this.entry_time_stamp;
   }
 
   setStart(start:string):void{
-    this.start = start;
+    this.entry_time_stamp = start;
   }
 
   getUserId():number{

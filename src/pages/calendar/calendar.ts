@@ -116,8 +116,8 @@ export class CalendarPage {
     else return num + "";
   }
 
-  gotoAnalytics() {
-    this.appCtrl.getRootNav().push('GraphTabsPage')
+  gotoAccount() {
+    this.appCtrl.getRootNav().push('AccountPage');
   }
 
 }

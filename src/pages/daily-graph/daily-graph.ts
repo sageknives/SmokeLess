@@ -83,8 +83,8 @@ export class DailyGraphPage {
       }).catch(this.toast.showError);
   }
 
-  gotoHome() {
-    this.appCtrl.getRootNav().pop();
+  gotoAccount() {
+    this.appCtrl.getRootNav().push('AccountPage');
   }
 
   graphData() {

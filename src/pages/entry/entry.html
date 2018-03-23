@@ -14,7 +14,7 @@
 
 
 <ion-content>
-  <p>{{entry.start | toLocalDateTime}}</p>
+  <p>{{entry.entry_time_stamp | toLocalDateTime}}</p>
   <ion-list no-lines>
     <ion-row>
       <ion-col col-6 [class]="true ? 'item-background' :'item-background error'">
@@ -26,7 +26,7 @@
         </ion-label>
         <span ion-datepicker [value]="chosenDate" (ionChanged)="updateDate($event)" clear class="ScheduleDate">
           <ion-item class="item-ion-datetime user-input">
-            <p>{{entry.start | toLocalDate}}
+            <p>{{entry.entry_time_stamp | toLocalDate}}
               <ion-icon name="calendar"></ion-icon>
             </p>
           </ion-item>

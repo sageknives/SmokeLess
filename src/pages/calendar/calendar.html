@@ -5,8 +5,8 @@
     </button>
     <ion-title>{{title}}</ion-title>
     <ion-buttons end>
-      <button ion-button icon-end icon-only (click)="gotoAnalytics()">
-        <ion-icon name="analytics"></ion-icon>
+      <button ion-button icon-end icon-only (click)="gotoAccount()">
+        <ion-icon name="contact"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -28,17 +28,17 @@
       </button>
     </ion-col>
   </ion-row>
-  <div class="calendar-box">
+  <ul class="calendar-box">
     <ng-template ngFor let-box [ngForOf]="dateboxes" let-i="index" [ngForTrackBy]="trackByFn">
-      <div class="date-box">
+      <li class="date-box">
         <span class="date-box-date">{{box.date}}</span>
         <span *ngIf="box.goal === undefined" class="date-box-details">{{box.count?box.count:""}}</span>
         <span *ngIf="box.goal !== undefined && box.count > 0 && box.goal >= box.count" class="date-box-details">{{box.count}}/{{box.goal}}</span>
         <span *ngIf="box.goal !== undefined && box.count > 0 && box.goal < box.count" class="date-box-details over-goal">{{box.count}}/{{box.goal}}</span>
 
-      </div>
+      </li>
     </ng-template>
-  </div>
+  </ul>
   <h2 text-center>Monthly Details</h2>
   <p>Total: {{total}}</p>
   <p>Daily Average: {{average}}</p>

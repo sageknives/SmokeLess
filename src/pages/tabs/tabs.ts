@@ -13,7 +13,9 @@ export class TabsPage {
   tab1Root = 'HomePage';
   tab2Root = 'ListPage';
   tab3Root = 'CalendarPage';
+  tab4Root = 'GraphTabsPage';
   @ViewChild('myTabs') tabRef: Tabs; 
+  selectedIndex = 0;
 
   constructor(
     private navParams:NavParams
@@ -23,6 +25,6 @@ export class TabsPage {
   }
   ionViewWillEnter() {
     let selectedTab = this.navParams.get('id');
-    if(selectedTab !== undefined) this.tabRef.select(selectedTab?selectedTab:0, {}); // In the method where you want set tab.
+    if(selectedTab !== undefined) this.selectedIndex = selectedTab;//this.tabRef.select(selectedTab?selectedTab:0, {}); // In the method where you want set tab.
   }
 }
