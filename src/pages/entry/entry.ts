@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Range } from 'ionic-angular';
 import { UserService } from '../../providers/user-service';
 import { SmokingService } from '../../providers/smoking-service';
 import { ToastService } from '../../providers/toast-service';
@@ -17,10 +17,11 @@ import * as moment from 'moment';
 export class EntryPage {
   @ViewChild(DatePickerDirective) private datepickerDirective: DatePickerDirective;
   private title = "Entry";
-  private entry: Entry = new Entry(undefined, undefined, undefined);
+  private entry: Entry = new Entry(undefined, undefined, undefined, undefined);
   private user: User;
   private chosenDate = moment(Date.now()).toDate();
   private chosenTime = moment(Date.now()).toISOString();
+  private percent: number = 0;
 
   constructor(
     public navCtrl: NavController,
@@ -43,11 +44,14 @@ export class EntryPage {
           this.entry = entry;
           this.chosenDate = moment(entry.getStart()).toDate();
           this.chosenTime = moment(entry.getStart()).format();
+          this.percent = this.entry.getNumberCount() * 100;
         }).catch(this.toast.showError);
     } else {
       this.chosenDate = moment(Date.now()).toDate();
       this.chosenTime = moment(Date.now()).format();
       this.entry.setStart(new Date().toISOString());
+      this.entry.setNumberCount(1);
+      this.percent = this.entry.getNumberCount() * 100;
     }
   }
 
@@ -72,9 +76,13 @@ export class EntryPage {
     this.entry.setStart(entryDate.toISOString());
   }
 
+  updateNumberCount(percent: Range) {
+    this.entry.setNumberCount(percent.value / 100);
+  }
+
   saveEntry() {
     if (this.entry.getId()) {
-      this.smokingService.updateEntry(this.entry.getId(), this.entry.getStart())
+      this.smokingService.updateEntry(this.entry.getId(), this.entry.getNumberCount(), this.entry.getStart())
         .then((wasUpdated: boolean) => {
           this.toast.show("Updated Entry");
           this.navCtrl.pop();
@@ -82,7 +90,7 @@ export class EntryPage {
           this.toast.show("problem updating entry");
         })
     } else {
-      this.smokingService.addEntry(this.entry.getStart(), this.user.getId())
+      this.smokingService.addEntry(this.entry.getStart(), this.entry.getNumberCount(), this.user.getId())
         .then((wasSaved) => {
           this.toast.show("Saved Entry");
           this.navCtrl.pop();
@@ -92,14 +100,14 @@ export class EntryPage {
     }
   }
 
-  deleteEntry(){
+  deleteEntry() {
     this.smokingService.deleteEntry(this.entry.getId())
-        .then((wasUpdated: boolean) => {
-          this.toast.show("Deleted Entry");
-          this.navCtrl.pop();
-        }).catch(error => {
-          this.toast.show("problem deleting entry");
-        })
+      .then((wasUpdated: boolean) => {
+        this.toast.show("Deleted Entry");
+        this.navCtrl.pop();
+      }).catch(error => {
+        this.toast.show("problem deleting entry");
+      })
   }
 
 }

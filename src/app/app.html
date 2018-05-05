@@ -13,12 +13,12 @@
         </ion-item> 
         <ion-item-divider color="background" class="menu-subheader" *ngIf="!p.component">{{p.title}}</ion-item-divider>
       </ng-template>
-      <ion-item tappable (click)="updateCount()" color="darkOverlay" >Version: {{versionNumber}}</ion-item>
+      <ion-item tappable menuClose (click)="secretButton()" color="darkOverlay" >Version: {{versionNumber}}</ion-item>
       <ion-item color="primary" *ngIf="devModeCount > 7" tappable (click)="secretButton()" center>Continue to the Magic Portal?</ion-item>
     </ion-list>
   </ion-content>
   <ion-footer class="bar button-bar">
-    <ion-toolbar color="dark" tappable menuClose (click)="openPage(logoutButton)">
+    <ion-toolbar color="dark"  tappable menuClose (click)="openPage(logoutButton)">
       <ion-title>{{logoutButton.title}}</ion-title>
     </ion-toolbar>
   </ion-footer>

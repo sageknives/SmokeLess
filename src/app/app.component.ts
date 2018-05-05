@@ -68,4 +68,9 @@ export class MyApp {
       this.nav.push(page.component, page.param);
     }
   }
+
+  secretButton(){
+    this.nav.push('DevSettingsPage');
+  }
+
 }

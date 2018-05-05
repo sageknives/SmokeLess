@@ -196,7 +196,7 @@ export class MockSQLiteObject extends SQLiteObject implements UniversalSQLiteInt
         case SqlCommands.INSERT_SMOKE: {
           let entries: Map<number, Entry> = this.database.get(SqlCommands.SMOKE_TABLE_NAME);
           let id = entries.size + 1;
-          let timer = new Entry(id, params[0], params[1]);
+          let timer = new Entry(id, params[0], params[1], params[2]);
           entries.set(id, timer);
           this.database.set(SqlCommands.SMOKE_TABLE_NAME, entries);
           resolve();
@@ -259,15 +259,16 @@ export class MockSQLiteObject extends SQLiteObject implements UniversalSQLiteInt
         }
         case SqlCommands.UPDATE_SMOKE_WHERE_ID: {
           let entries: Map<number, Entry> = this.database.get(SqlCommands.SMOKE_TABLE_NAME);
-          let entry = new Entry(params[2], params[0], params[1]);
+          let entry = new Entry(params[3], params[0], params[1],params[2]);
           entries.set(entry.getId(), entry);
           this.database.set(SqlCommands.SMOKE_TABLE_NAME, entries);
           resolve();
           break;
         }
-        case SqlCommands.UPDATE_SMOKE_ENTRY_TIME_STAMP_WHERE_ID: {
+        case SqlCommands.UPDATE_SMOKE_ENTRY_TIME_STAMP_AND_NUMBERCOUNT_WHERE_ID: {
           let entries: Map<number, Entry> = this.database.get(SqlCommands.SMOKE_TABLE_NAME);
-          let entry = entries.get(params[1]);
+          let entry = entries.get(params[2]);
+          entry.setNumberCount(params[1]);
           entry.setStart(params[0]);
           this.database.set(SqlCommands.SMOKE_TABLE_NAME, entries);
           resolve();
@@ -289,12 +290,9 @@ export class MockSQLiteObject extends SQLiteObject implements UniversalSQLiteInt
   sqlBatch(sqlStatements: Array<string | string[] | any>): Promise<any> {
     throw new Error("Not Implemented");
   }
-
-
 }
 
 export class MobileSQLiteObject extends SQLiteObject implements UniversalSQLiteInterface {
-
 }
 
 class BrowserWebDatabase {
@@ -339,6 +337,7 @@ class BrowserWebDatabase {
           map.set(item._id, new Entry(
             item._id,
             item.entry_time_stamp,
+            item.numberCount,
             item.userId
           ));
         })
@@ -356,8 +355,6 @@ export class SQLRowList {
   ) {
     this.rows = new SqlRow(entries);
   }
-
-
 }
 
 class SqlRow {

@@ -40,8 +40,19 @@
           </span>
         </ion-label>
         <ion-item class="item-ion-datetime">
-          <ion-datetime displayFormat="hh:mm A" pickerFormat=" h:mm A" [(ngModel)]="chosenTime" (ngModelChange)="updateTime($event)" #chosentime="ngModel"
-            [ngModelOptions]="{standalone: true}"></ion-datetime>
+          <ion-datetime displayFormat="hh:mm A" pickerFormat=" h:mm A" [(ngModel)]="chosenTime" (ngModelChange)="updateTime($event)"
+            #chosentime="ngModel" [ngModelOptions]="{standalone: true}"></ion-datetime>
+        </ion-item>
+      </ion-col>
+      <ion-col col-12 [class]="true ? 'item-background' :'item-background error'">
+        <ion-label stacked color="primary">
+          Percent of Cigarette
+          <span class="error-message">
+            : is required.
+          </span>
+        </ion-label>
+        <ion-item class="item-ion-datetime">
+          <ion-range debounce="700" min="0" max="100" step="25" snaps="true" color="secondary" [(ngModel)]="percent" (ionChange)="updateNumberCount($event)"></ion-range>
         </ion-item>
       </ion-col>
     </ion-row>

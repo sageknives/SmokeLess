@@ -62,7 +62,7 @@ export class HomePage {
   }
 
   smokeNow() {
-    this.smokingService.addEntry(new Date().toISOString(), this.user.getId())
+    this.smokingService.addEntry(new Date().toISOString(), 1, this.user.getId())
       .then((wasAdded) => {
         if (wasAdded) {
           this.toast.show("Smoking");

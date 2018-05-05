@@ -70,14 +70,14 @@ export class SmokingService {
    * @param date {Date} the timestamp
    * @param userId {number} the user id 
    */
-  public addEntry(date: string, userId: number): Promise<boolean> {
+  public addEntry(date: string, numberCount: number, userId: number): Promise<boolean> {
     return new Promise((resolve, reject) => {
       let db;
       this.getDatabase()
         .then((database: UniversalSQLiteInterface) => {
           db = database;
           return db.executeSql(SqlCommands.INSERT_SMOKE,
-            [date, userId]);
+            [date, numberCount, userId]);
         }).then(res => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -101,7 +101,7 @@ export class SmokingService {
             SqlCommands.SELECT_ALL_FROM_SMOKE_WHERE_ID, [id]);
         }).then(res => {
           let result = res.rows.item(0);
-          entry = new Entry(result._id, result.entry_time_stamp, result.user_id);
+          entry = new Entry(result._id, result.entry_time_stamp, result.numberCount, result.user_id);
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
           resolve(entry);
@@ -115,12 +115,12 @@ export class SmokingService {
    * update Entry
    * @param id {number} the smoke id 
    */
-  public updateEntry(id: number, date: string): Promise<boolean> {
+  public updateEntry(id: number, numberCount: number, date: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       let entry: Entry;
       this.getDatabase()
         .then((db: UniversalSQLiteInterface) => {
-          return db.executeSql(SqlCommands.UPDATE_SMOKE_ENTRY_TIME_STAMP_WHERE_ID, [date, id])
+          return db.executeSql(SqlCommands.UPDATE_SMOKE_ENTRY_TIME_STAMP_AND_NUMBERCOUNT_WHERE_ID, [date, numberCount, id])
         }).then(res => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -166,7 +166,7 @@ export class SmokingService {
             SqlCommands.SELECT_ALL_FROM_SMOKE_WHERE_USER_ID_BETWEEN_START_END, [userId, start, end]);
         }).then(res => {
           for (var i = 0; i < res.rows.length; i++) {
-            entries.push(new Entry(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).user_id));
+            entries.push(new Entry(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).numberCount, res.rows.item(i).user_id));
           }
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -216,7 +216,7 @@ export class SmokingService {
             SqlCommands.SELECT_ALL_FROM_SMOKE_WHERE_USER_ID, [userId]);
         }).then(res => {
           for (var i = 0; i < res.rows.length; i++) {
-            entries.push(new Entry(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).user_id));
+            entries.push(new Entry(res.rows.item(i)._id, res.rows.item(i).entry_time_stamp, res.rows.item(i).numberCount, res.rows.item(i).user_id));
           }
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -224,6 +224,60 @@ export class SmokingService {
         }).catch(e => {
           reject("There was a problem adding your smoke");
         });
+    });
+  }
+
+  public AddNumberCountColumnToTable(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      let db: UniversalSQLiteInterface;
+
+      this.getDatabase()
+        .then((database: UniversalSQLiteInterface) => {
+          db = database;
+          return this.checkIfNumberColumnExists(db);
+        }).then((exists: boolean) => {
+          if (exists) {
+            return true;
+          } else {
+            return this.addColumn(db);
+          }
+        }).then((added: boolean) => {
+          return this.closeDatabase();
+        }).then((closed: boolean) => {
+          resolve();
+        }).catch(error => {
+          reject(error);
+        })
+    });
+  }
+
+  private addColumn(db: UniversalSQLiteInterface): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      db.executeSql(
+        SqlCommands.ADD_NUMBER_COUNT_TO_SMOKING_TABLE,
+        []
+      ).then((res) => {
+        resolve(true);
+      }).catch(error =>
+        reject(error)
+      )
+    })
+  }
+
+  private checkIfNumberColumnExists(db: UniversalSQLiteInterface): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      db.executeSql(
+        SqlCommands.NUMBER_COUNT_EXISTS_IN_SMOKING_TABLE, []
+      ).then((res) => {
+        resolve(true)
+      }).catch(error => {
+        if (error.code && error.code === 5) {
+          resolve(false);
+        }
+        else {
+          reject(error);
+        }
+      }).catch(reject);
     });
   }
 
