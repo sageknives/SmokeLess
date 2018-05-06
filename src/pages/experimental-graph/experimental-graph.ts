@@ -24,7 +24,6 @@ export class ExperimentalGraphPage {
   private title = "Experimental Graph";
   private user: User = User.fromJSON({});
   private entries: Entry[] = new Array<Entry>();
-  private hourCounts: HourCount[] = new Array<HourCount>();
   @ViewChild('experimentalCanvas1') experimentalCanvas1;
   experimentalChart1: any;
   @ViewChild('experimentalCanvas2') experimentalCanvas2;
@@ -66,21 +65,79 @@ export class ExperimentalGraphPage {
       })
   }
 
+  // public decayRateTestHalfLife2() {
+  //   let mg = 1.5;
+  //   let halfLife = 2;
+  //   let dayHours96 = this.getNumberHoursArray2();
+  //   let today = new Array<number>();
+  //   for (let now = 72; now < dayHours96.length; now++) {
+  //     let count = 0;
+  //     for (let past = now; past >= 0; past--) {
+  //       let hourMg = mg * dayHours96[past];
+  //       let n = (now - past) / halfLife;
+  //       let mgCounted = (hourMg / Math.pow(2, n));
+  //       if (mgCounted.toString().includes("e")) break;
+  //       count = count + mgCounted;
+  //       console.log(
+  //         "HOUR:" + past +
+  //         ", hour mg:" + hourMg +
+  //         ", hourMgCounted:" + mgCounted +
+  //         ", count so far:" + count
+  //       )
+  //     }
+  //     today.push(count);
+  //   }
+  //   for (let i = 0; i < today.length; i++) {
+  //     let numberText = (i % 12 === 0) ? 12 : i % 12;
+  //     console.log(numberText + ": " + today[i])
+  //   }
+  // }
+
   setUpAndDisplayGraph() {
     let total: number = 0;
-    let start = moment(this.selectedDate).startOf('day').toISOString();
-    let end = moment(start).add(1, 'day').toISOString();
+    let momentStart = moment(this.selectedDate).add(-3, 'day').startOf('day');
+    let start = momentStart.toISOString();
+    let end = moment(start).add(4, 'day').toISOString();
+    let hourCount = new Array<number>();
     this.smokingService.getEntries(this.user.getId(), start, end)
       .then((entries: Entry[]) => {
-        while (this.hourCounts.length > 0) this.hourCounts.pop();
-        for (let i = 0; i < 24; i++) this.hourCounts.push({ hour: i, count: 0 });
+        // while (this.hourCounts.length > 0) this.hourCounts.pop();
+        for (let i = 0; i < 96; i++) {
+          let temp = moment(this.selectedDate).add(-3, 'day').startOf('day').add(i, 'hour');
+          hourCount[temp.get('date') + "-" + temp.get('hour')] = 0;
+        }
         entries.forEach(entry => {
+          let day = moment(entry.getStart()).get('date');
           let hour = moment(entry.getStart()).get('hour');
-          this.hourCounts[hour].count += entry.getNumberCount()/100;
-          total += entry.getNumberCount()/100;
+          let count = entry.getNumberCount()/100;
+          hourCount[day + "-" + hour] += count;
+          total += entry.getNumberCount() / 100;
         });
-        console.log("hours", this.hourCounts);
-        this.graphData();
+
+        let mg = 1;
+        let halfLife = 2;
+        let today = new Array<number>();
+        for (let now = 72; now < 96; now++) {
+          let count = 0;
+          for (let past = now; past >= 0; past--) {
+            let temp2 = moment(this.selectedDate).add(-3, 'day').startOf('day').add(past, 'hour');
+
+            let hourMg = mg * hourCount[temp2.get('date')+"-"+temp2.get('hour')];
+            let n = (now - past) / halfLife;
+            let mgCounted = (hourMg / Math.pow(2, n));
+            if (mgCounted.toString().includes("e")) break;
+            count = count + mgCounted;
+            // console.log(
+            //   "HOUR:" + past +
+            //   ", hour mg:" + hourMg +
+            //   ", hourMgCounted:" + mgCounted +
+            //   ", count so far:" + count
+            // )
+          }
+          today.push(count);
+        }
+        // console.log("hours", today);
+        this.graphData(today);
         this.total = total;
         this.average = Number.parseFloat((total / 24).toFixed(2));
 
@@ -91,15 +148,15 @@ export class ExperimentalGraphPage {
     this.appCtrl.getRootNav().push('AccountPage');
   }
 
-  graphData() {
+  graphData(dosage:number[]) {
     let hours = new Array<number>();
     let counts = new Array<number>();
     let max = 0;
-    this.hourCounts.forEach(hourCount => {
-      let zeroToEleven = hourCount.hour % 12;
+    dosage.forEach((dose:number,i:number) => {
+      let zeroToEleven = i % 12;
       hours.push(zeroToEleven === 0 ? 12 : zeroToEleven);
-      counts.push(hourCount.count);
-      if (hourCount.count > max) max = hourCount.count;
+      counts.push(dose);
+      if (dose > max) max = dose;
     })
     this.experimentalChart1 = new Chart(this.experimentalCanvas1.nativeElement, {
       type: 'line',

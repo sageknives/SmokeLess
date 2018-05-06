@@ -196,7 +196,7 @@ export class MockSQLiteObject extends SQLiteObject implements UniversalSQLiteInt
         case SqlCommands.INSERT_SMOKE: {
           let entries: Map<number, Entry> = this.database.get(SqlCommands.SMOKE_TABLE_NAME);
           let id = entries.size + 1;
-          let timer = new Entry(id, params[0], params[1], params[2]);
+          let timer = new Entry(id, params[0], params[2], params[1]);
           entries.set(id, timer);
           this.database.set(SqlCommands.SMOKE_TABLE_NAME, entries);
           resolve();
