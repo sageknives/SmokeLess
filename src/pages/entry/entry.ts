@@ -44,14 +44,14 @@ export class EntryPage {
           this.entry = entry;
           this.chosenDate = moment(entry.getStart()).toDate();
           this.chosenTime = moment(entry.getStart()).format();
-          this.percent = this.entry.getNumberCount() * 100;
+          this.percent = this.entry.getNumberCount();
         }).catch(this.toast.showError);
     } else {
       this.chosenDate = moment(Date.now()).toDate();
       this.chosenTime = moment(Date.now()).format();
       this.entry.setStart(new Date().toISOString());
       this.entry.setNumberCount(1);
-      this.percent = this.entry.getNumberCount() * 100;
+      this.percent = this.entry.getNumberCount();
     }
   }
 
@@ -77,7 +77,7 @@ export class EntryPage {
   }
 
   updateNumberCount(percent: Range) {
-    this.entry.setNumberCount(percent.value / 100);
+    this.entry.setNumberCount(percent.value);
   }
 
   saveEntry() {

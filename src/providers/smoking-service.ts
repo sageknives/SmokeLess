@@ -77,7 +77,7 @@ export class SmokingService {
         .then((database: UniversalSQLiteInterface) => {
           db = database;
           return db.executeSql(SqlCommands.INSERT_SMOKE,
-            [date, numberCount, userId]);
+            [date, userId, numberCount]);
         }).then(res => {
           return this.closeDatabase();
         }).then((wasClosed: boolean) => {
@@ -227,6 +227,39 @@ export class SmokingService {
     });
   }
 
+
+  /**TEMP! */
+  public updateNumberCountToOne(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      let entries: Entry[] = new Array<Entry>();
+      let db: UniversalSQLiteInterface;
+      this.getDatabase()
+        .then((database: UniversalSQLiteInterface) => {
+          db = database;
+          return db.executeSql(
+            SqlCommands.SELECT_ALL_FROM_SMOKE, []);
+        }).then(res => {
+          let promises = new Array<Promise<boolean>>();
+          for (var i = 0; i < res.rows.length; i++) {
+            let id = res.rows.item(i)._id;
+            let numberCount = 100;
+            let stamp = res.rows.item(i).entry_time_stamp;
+            promises.push(db.executeSql(SqlCommands.UPDATE_SMOKE_ENTRY_TIME_STAMP_AND_NUMBERCOUNT_WHERE_ID, [stamp, numberCount, id]));
+          }
+          return Promise.all(promises);
+        }).then((wasUpdated: any[]) => {
+          console.log("wasUpdated", wasUpdated);
+          return this.closeDatabase();
+        }).then((wasClosed: boolean) => {
+          resolve();
+        }).catch(e => {
+          reject("There was a problem adding your smoke");
+        });
+    })
+  }
+
+  /**TEMP! */
+
   public AddNumberCountColumnToTable(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let db: UniversalSQLiteInterface;
@@ -250,6 +283,7 @@ export class SmokingService {
         })
     });
   }
+  /**TEMP! */
 
   private addColumn(db: UniversalSQLiteInterface): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -263,6 +297,7 @@ export class SmokingService {
       )
     })
   }
+  /**TEMP! */
 
   private checkIfNumberColumnExists(db: UniversalSQLiteInterface): Promise<boolean> {
     return new Promise((resolve, reject) => {

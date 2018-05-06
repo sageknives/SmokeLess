@@ -76,8 +76,8 @@ export class MonthlyGraphPage {
         for (let i = 0; i < daysInMonth; i++) this.dayCounts.push({ day: i, count: 0 });
         entries.forEach(entry => {
           let date = moment(entry.getStart()).get('date')-1;
-          this.dayCounts[date].count++;
-          total++;
+          this.dayCounts[date].count+=entry.getNumberCount()/100;
+          total+=entry.getNumberCount()/100;
         });
         console.log("days", this.dayCounts);
         this.graphData();

@@ -57,6 +57,52 @@ export class ToastService {
     alert.present();
   }
 
+  choosePercentage(percents: number[]): Promise<number> {
+    return new Promise((resolve, reject) => {
+      let inputs: AlertInputOptions[] = new Array<AlertInputOptions>();
+      for (let i = 0; i < percents.length; i++) {
+        let input: AlertInputOptions = {
+          value: percents[i] + "",
+          label: percents[i] + "%",
+          type: 'radio',
+          checked: percents[i] === 100
+        }
+        inputs.push(input);
+      }
+      let alert = this.alertController.create({
+        title: "Smoke now?",
+        message: "Do you want to smoke now or can you wait 5 minutes more?",
+        inputs: inputs,
+        buttons: [
+          {
+            text: 'Wait',
+            role: 'cancel',
+            handler: () => {
+              console.log('cancel');
+            }
+          },
+          {
+            text: 'Smoke',
+            role: 'smoke',
+            handler: () => {
+              console.log('Smoke');
+            }
+          }
+        ]
+      });
+      alert.present();
+      alert.onDidDismiss((data: any, role: string) => {
+        if (role === 'smoke') {
+          let percent = Number.parseFloat(data);
+          resolve(percent);
+        }
+        else {
+          resolve();
+        }
+      });
+    });
+  }
+
   messageConfirm(title: string, message: string, cancelMessage?: string, acceptMessage?: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
 

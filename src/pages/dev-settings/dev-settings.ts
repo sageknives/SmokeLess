@@ -18,12 +18,7 @@ export class DevSettingsPage {
   }
 
   ionViewDidLoad() {
-    this.smokingService.AddNumberCountColumnToTable()
-      .then(() => {
-        this.toast.show("database updated");
-      }).catch(error => {
-        this.toast.showError(error);
-      })
+    
   }
 
 }

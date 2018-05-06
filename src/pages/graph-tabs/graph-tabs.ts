@@ -10,6 +10,7 @@ export class GraphTabsPage {
   tab1Root = 'DailyGraphPage';
   tab2Root = 'WeeklyGraphPage';
   tab3Root = 'MonthlyGraphPage';
+  tab4Root = 'ExperimentalGraphPage';
   @ViewChild('graphTabs') tabRef2: Tabs; 
   color="primary";
 

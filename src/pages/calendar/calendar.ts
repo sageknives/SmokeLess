@@ -103,12 +103,12 @@ export class CalendarPage {
         entries.forEach(entry => {
           let box = this.dateboxes.find(box => box.date === moment(entry.getStart()).get('date'));
           if (box) {
-            if (!box.count) box.count = 1;
-            else box.count++;
+            if (!box.count) box.count = entry.getNumberCount()/100;
+            else box.count += entry.getNumberCount()/100;
           }
         })
         console.log("days", this.dateboxes);
-        this.total = entries.length;
+        this.total = entries.reduce((total,entry)=>total + entry.getNumberCount()/100, 0);
         let recordedDays = this.dateboxes.filter(d=>d.count > 0);
         this.average = Number.parseFloat((this.total / recordedDays.length).toFixed(2));
         if(Number.isNaN(this.average)) this.average = 0;

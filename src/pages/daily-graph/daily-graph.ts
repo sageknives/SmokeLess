@@ -72,8 +72,8 @@ export class DailyGraphPage {
         for (let i = 0; i < 24; i++) this.hourCounts.push({ hour: i, count: 0 });
         entries.forEach(entry => {
           let hour = moment(entry.getStart()).get('hour');
-          this.hourCounts[hour].count++;
-          total++;
+          this.hourCounts[hour].count += entry.getNumberCount()/100;
+          total += entry.getNumberCount()/100;
         });
         console.log("hours", this.hourCounts);
         this.graphData();

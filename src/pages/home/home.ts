@@ -52,17 +52,15 @@ export class HomePage {
   }
 
   attemptToSmoke() {
-    this.toast.messageConfirm(
-      "Smoke now?",
-      "Do you want to smoke now or can you wait 5 minutes more?",
-      "Wait", "Smoke")
-      .then((smoke: boolean) => {
-        if (smoke) this.smokeNow();
+    this.toast.choosePercentage(
+      [25,50,75,100])
+      .then((percent: number) => {
+        if (percent) this.smokeNow(percent);
       }).catch(this.toast.showError);
   }
 
-  smokeNow() {
-    this.smokingService.addEntry(new Date().toISOString(), 1, this.user.getId())
+  smokeNow(percent:number) {
+    this.smokingService.addEntry(new Date().toISOString(), percent, this.user.getId())
       .then((wasAdded) => {
         if (wasAdded) {
           this.toast.show("Smoking");
@@ -72,13 +70,14 @@ export class HomePage {
       }).catch(this.toast.showError);
   }
 
+
   getCount() {
     let start = moment(Date.now()).startOf('day').toISOString();
     let end = moment(start).add(1, 'day').toISOString();
     this.smokingService.getEntries(this.user.getId(), start, end)
       .then((entries: Entry[]) => {
 
-        this.total = entries.length;;
+        this.total = entries.reduce((total,entry)=>total + entry.getNumberCount()/100, 0);
         this.total = this.total ? this.total : 0;
         this.goal = this.user.getDayGoal(start);
         entries.sort((a, b) => a.getStart() === b.getStart() ? 0 : a.getStart() < b.getStart() ? 1 : -1);

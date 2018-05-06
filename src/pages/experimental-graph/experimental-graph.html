@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-navbar color="dark">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-end icon-only (click)="gotoAccount()">
+        <ion-icon name="contact"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-row class="stat-box">
+    <ion-col col-6>
+      Total: {{total}}
+    </ion-col>
+    <ion-col col-6>
+      Hour Average: {{average}}
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col col-2>
+      <button ion-button icon-end icon-only tappable (click)="prevDate()" color="light" class="full-height-button" full>
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-col>
+    <ion-col col-8>
+      <h2 ion-text text-center padding-verticle>{{selectedDate | toLocalDate}}</h2>
+    </ion-col>
+    <ion-col col-2>
+      <button ion-button icon-end icon-only tappable (click)="nextDate()" color="light" class="full-height-button" full>
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+    </ion-col>
+  </ion-row>
+  <canvas #experimentalCanvas1></canvas>
+  <canvas #experimentalCanvas2></canvas>
+</ion-content>
